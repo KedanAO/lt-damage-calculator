@@ -33,6 +33,7 @@ body {
 
 .input-full, .input-slider {
   width: 80px;
+  text-align: center;
 }
 
 .input-perc {
@@ -101,6 +102,17 @@ body {
   flex-direction: column;
 }
 
+.buff-buttons {
+  display: grid;
+  grid-template-columns: repeat( auto-fit, minmax(150px, 1fr) );
+}
+
+.buff-buttons>button {
+  margin-left: 1em;
+  margin-right: 1em;
+  margin-bottom: 1em;
+}
+
 .buff-tier {
   display: grid;
   grid-template-columns: repeat( auto-fit, minmax(200px, 300px) );
@@ -129,6 +141,44 @@ body {
 
 .buff-separator:not(:empty)::after {
   margin-left: .25em;
+}
+
+.equivalence-block {
+  position: absolute;
+  top: 50px;
+  left: 5%;
+  border: 1px solid gray;
+  border-radius: 4px;
+  width: 90%;
+  background-color: white;
+  padding: 10px 10px 30px 10px;
+
+  display: grid;
+  grid-template-columns: repeat( auto-fit, minmax(400px, 1fr) );
+}
+
+.equivalence-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.equivalence-table>tr>th {
+  text-align: center;
+} 
+
+.equivalence-table>tr>td {
+  text-align: end;
+}
+
+table {
+  border-collapse: collapse;
+}
+
+td, th {
+  border: 1px solid #dddddd;
+  padding: 8px;
 }
 
 #tooltip {

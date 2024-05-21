@@ -130,10 +130,42 @@ export default {
         normal: ['0.05', '0.05'],
         boss: ['0.05', '0.05']
       },
+      equivalencePercent: {
+        'strength': ['', ''],
+        'attack': ['', ''],
+        'critical': ['', ''],
+        'minimum': ['', ''],
+        'maximum': ['', ''],
+        'static': ['', ''],
+        'normalAdded': ['', ''],
+        'bossAdded': ['', ''],
+        'normalAmp': ['', ''],
+        'bossAmp': ['', ''],
+      },
+      equivalenceCritical: {
+        'strength': ['', ''],
+        'attack': ['', ''],
+        'critical': ['', ''],
+        'minimum': ['', ''],
+        'maximum': ['', ''],
+        'static': ['', ''],
+        'normalAdded': ['', ''],
+        'bossAdded': ['', ''],
+        'normalAmp': ['', ''],
+        'bossAmp': ['', ''],
+      },
+      equivalenceValues: {
+        'perc': 1,
+        'critical': 10
+      },
 
       // other
-      displayBuffs: false,
-      displayConfigs: false,
+      displayWindow: {
+        'buffs': false,
+        'config': false,
+        'info': false,
+        'equivalence': false
+      },
       tooltip: false,
       tooltipPosition: [0,0],
       tooltipText: '',
@@ -419,18 +451,61 @@ export default {
         }
       }
     },
+
+    getEquivalence(incPerc) {
+      const buffedStats = applyChanges(this.stats, this.getBuffStats())
+      const equivalence = calculateEquivalenceIncrease(buffedStats, this.settings, this.defenses, incPerc / 100)
+
+      return equivalence
+    },
+
+    updateEquivalences() {
+      const buffedStats = applyChanges(this.stats, this.getBuffStats())
+      const critStats = applyChanges(buffedStats, {'critical': [this.equivalenceValues.critical, 0]})
+      let critIncrease = compareDamage(
+        getAverageDamage(
+          calculateDamage(buffedStats, this.settings, this.defenses, 'normal'), 
+          calculateDamage(buffedStats, this.settings, this.defenses, 'boss'), 
+          this.settings.bossWeight
+        ),
+        getAverageDamage(
+          calculateDamage(critStats, this.settings, this.defenses, 'normal'), 
+          calculateDamage(critStats, this.settings, this.defenses, 'boss'), 
+          this.settings.bossWeight)
+      )
+      critIncrease *= 100
+
+      const equivalencePerc = this.getEquivalence(this.equivalenceValues.perc)
+      const equivalenceCrit = this.getEquivalence(critIncrease)
+
+      for (let st in this.stats) {
+        this.equivalencePercent[st][0] = typeof(equivalencePerc[st][0]) === 'string' ? equivalencePerc[st][0] : equivalencePerc[st][0].toFixed(2)
+        this.equivalencePercent[st][1] = typeof(equivalencePerc[st][1]) === 'string' ? equivalencePerc[st][1] : equivalencePerc[st][1].toFixed(2) + '%'
+        this.equivalenceCritical[st][0] = typeof(equivalenceCrit[st][0]) === 'string' ? equivalenceCrit[st][0] : equivalenceCrit[st][0].toFixed(2)
+        this.equivalenceCritical[st][1] = typeof(equivalenceCrit[st][1]) === 'string' ? equivalenceCrit[st][1] : equivalenceCrit[st][1].toFixed(2) + '%'
+      }
+    },
     
     // run all updates
     updateAll() {
       this.updateDamage()
       this.updateIncreases()
       this.updateBuffs()
+      this.updateEquivalences()
     },
 
     // for handling tooltip display
     onMouseMove(e) {
       this.tooltipPosition[0] = e.pageX + 15
       this.tooltipPosition[1] = e.pageY
+    },
+
+    // display & hide additional windows when their buttons are clicked
+    selectDisplayWindow(selection) {
+      for (let w in this.displayWindow) {
+        if (w === selection && !this.displayWindow[w]) { this.displayWindow[w] = true }
+        else { this.displayWindow[w] = false }
+      }
     }
   },
 
@@ -449,10 +524,10 @@ export default {
 <template>
   <!-- buttons to bring up additional windows -->
   <div>
-    <span><button>Information</button></span>
-    <span><button @click="displayConfigs = !displayConfigs">Config</button></span>
-    <span><button @click="displayBuffs = !displayBuffs">Buffs</button></span>
-    <span><button>Equivalence Tables</button></span>
+    <span><button @click="selectDisplayWindow('info')">Information</button></span>
+    <span><button @click="selectDisplayWindow('config')">Config</button></span>
+    <span><button @click="selectDisplayWindow('buffs')">Buffs</button></span>
+    <span><button @click="selectDisplayWindow('equivalence')">Equivalence Tables</button></span>
   </div>
   <!-- stat blocks displaying stat inputs and damage calculations -->
   <div class="container">
@@ -623,7 +698,7 @@ export default {
   </div>
 
   <!-- general configs block -->
-  <div v-if="displayConfigs" class="container config-block">
+  <div v-if="displayWindow['config']" class="container config-block">
     <div class="stat-block">
       <h2 class="damage-block">Settings</h2>
       <li class="input-container">
@@ -666,9 +741,9 @@ export default {
     </div>
   </div>
   <!-- buffs window -->
-  <div v-if="displayBuffs" class="buff-block">
+  <div v-if="displayWindow['buffs']" class="buff-block">
     <h2 class='damage-block'>Buffs</h2>
-    <div class='damage-container'>
+    <div class='buff-buttons'>
       <button @click="toggleBuffs('Minimal')">Toggle Minimal</button>
       <button @click="toggleBuffs('Midterm')">Toggle Midterm</button>
       <button @click="toggleBuffs('Maxed')">Toggle Maxed</button>
@@ -696,6 +771,35 @@ export default {
           </select>
         </div>
       </div>
+    </div>
+  </div>
+  <!-- equivalence tables -->
+  <div v-if="displayWindow['equivalence']" class="equivalence-block">
+    <div class="equivalence-container">
+      <h2 class='damage-block'>DI Equivalence</h2>
+      <div class="input-container">
+        <span class="input-text">Damage Increase</span>
+        <span><input type="text" inputmode="numeric" class="input-full" v-model.number="equivalenceValues.perc"></span> %
+      </div>
+      <table class="equivalence-table"> 
+        <tr><th>Stat</th><th>Flat needed</th><th>% needed</th></tr>
+        <tr v-for="stat in Object.keys(stats)">
+          <td>{{ statNames[stat] }}</td><td>{{ equivalencePercent[stat][0] }}</td><td>{{ equivalencePercent[stat][1] }}</td>
+        </tr>
+      </table>
+    </div>
+    <div class="equivalence-container">
+      <h2 class='damage-block'>Critical Equivalence</h2>
+      <div class="input-container">
+        <span class="input-text">Critical Damage</span>
+        <span><input type="text" inputmode="numeric" class="input-full" v-model.number="equivalenceValues.critical"></span>
+      </div>
+      <table class="equivalence-table">
+        <tr><th>Stat</th><th>Equivalent to</th><th>%</th></tr>
+        <tr v-for="stat in Object.keys(stats)">
+          <td>{{ statNames[stat] }}</td><td>{{ equivalenceCritical[stat][0] }}</td><td>{{ equivalenceCritical[stat][1] }}</td>
+        </tr>
+      </table>
     </div>
   </div>
 
