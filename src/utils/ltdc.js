@@ -31,7 +31,8 @@ export function calculateDamage(stats, settings, defenses, enemyType) {
 
   // multipliers
   const critical = (stats.critical[0] + 100) / 100;
-  const minmax = (stats.minimum[0] * settings.minWeight + stats.maximum[0] * (1 - settings.minWeight) + 120) / 100;
+  const min = stats.minimum[0] <= stats.maximum[0] ? stats.minimum[0] : stats.maximum[0]
+  const minmax = (min * settings.minWeight + stats.maximum[0] * (1 - settings.minWeight) + 120) / 100;
   const amp = 1 + stats[enemyType + 'Amp'][0] / 100;
 
   const multiplier = critical * minmax * amp;
@@ -58,7 +59,7 @@ export function calculateEquivalenceIncrease(stats, settings, defenses, increase
   const d = stats.normalAdded[0];
   const e = stats.bossAdded[0];
   const f = stats.critical[0];
-  const g = stats.minimum[0];
+  const g = stats.minimum[0] <= stats.maximum[0] ? stats.minimum[0] : stats.maximum[0];
   const h = stats.maximum[0];
   const i = stats.normalAmp[0];
   const j = stats.bossAmp[0];
