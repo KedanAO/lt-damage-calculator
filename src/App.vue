@@ -51,7 +51,8 @@ export default {
         'aF': 170,
         'sF': 1.32,
         'minWeight': 0.3,
-        'bossWeight': 0.5
+        'bossWeight': 0.5,
+        'target': 'soft'
       },
       buffs,
       selectedBuffs: {
@@ -485,9 +486,30 @@ export default {
         this.equivalenceCritical[st][1] = typeof(equivalenceCrit[st][1]) === 'string' ? equivalenceCrit[st][1] : equivalenceCrit[st][1].toFixed(2) + '%'
       }
     },
+
+    updateDefenses() {
+      let newDef = {
+        'multiplier': 1,
+        'flat': 0,
+        'mitigation': 0
+      }
+      if (this.settings.target === 'durable') {
+        newDef.multiplier = 0.6017
+        newDef.flat = 500000
+        newDef.mitigation = 0.8
+      } 
+      // add 7k mob/boss...
+
+      this.defenses.multiplier = newDef.multiplier
+      this.defenses.flat = newDef.flat
+      this.defenses.mitigation = newDef.mitigation
+
+      this.updateAll()
+    },
     
     // run all updates
     updateAll() {
+      // implement error catching in case saved data is in incorrect format
       this.updateDamage()
       this.updateIncreases()
       this.updateBuffs()
@@ -511,6 +533,7 @@ export default {
 
   mounted() {
     this.readData()
+    this.updateDefenses()
     this.updateAll()
   },
 
@@ -697,7 +720,89 @@ export default {
     </div>
   </div>
 
+  <!-- information block -->
+  <div v-if="displayWindow['info']" class="info-block">
+    <h2>Damage Formula</h2>
+    This calculator aims to use your character's stats in order to determine either your average or exact damage to a specific target in specific conditions.
+    <br>
+    From research done by players in the past, the general damage formula has been determined to be as follows, when attacking the soft dummy in the fight arena:
+    <br><br>
+    <!-- base, multipliers, damage basic formulas -->
+    <img src="./assets/formula_base_basic.png" alt="">
+    <br><br>
+    <img src="./assets/formula_multipliers_basic.png" alt="">
+    <br><br>
+    <img src="./assets/formula_damage_basic.png" alt="">
+    <br><br>
+    First, there are two main components: the base, concerning stats which are additive, which consists of Attack/Intensity (referred to as simply Attack within this
+    explanation), Strength/Magic (similarly, referred to as Strength), Static Damage and Normal/Boss Added Damage (referred to as simply Added Damage), and the multipliers,
+    consisting of stats that multiply the base and themselves, those being Critical Damage, Minimum/Maximum Damage and Normal/Boss Amplification.
+    <br><br>
+    Most of those values are obtained from our visible stats in-game, except for two: <em>Attack Factor</em> and <em>Strength Factor</em>.
+    Those two values are skill-scaling factors which are different for every skill within the game, but there are a few standard rules:
+    <br>
+    - For both of those values and when applicable, increasing skill levels will increase their value by a fixed amount.
+    <br>
+    - Attack Factor is present in every skill, typically being higher for direct damage skills and it affects how each skill scales with Attack.
+    <br>
+    - Strength Factor is present only in summon skills, affecting how those skills scale with Strength, Static Damage and Added Damage.
+    <br>
+    - Bleed (Additional Damage) scale with the Attack Factor but do not scale with skill levels, except on buffs that have levels such as Demigod's Seres' Grace.
+    <br>
+    For more information on factors, the values of the factors for each class' skills and recommended factors to use within the calculator for each class, please see: (link to factor research)
+    <h3>Minimum Weight</h3>
+    When actually dealing damage in the game, every hit will roll a random value between your Minimum and Maximum damage and utilize that value for that specific hit.
+    For the purposes of this calculator, we utilize a <em>Minimum Weight</em> value within the configurations to determine how much both of those stats influence in the
+    average damage:
+    <br><br>
+    <!-- full multiplier formula -->
+    <img src="./assets/formula_multipliers_weighted.png" alt="">
+    <br><br>
+    To consider maximum damage, set it to 0%. General scenarios, set it to 50%. Considering optimal usage of LL6, set it to 30%.
+    <h3>Boss Weight</h3>
+    The average damage displayed under each stat block refers to a generic average amount of damage you'd do in your runs, between normal and boss damage. This value is simply
+    a weighted average between Normal and Boss damage, set by the Boss Weight within the configurations. In the current endgame meta (7k), it's recommended to set it to 50%.
+    Note that this does not mean Normal or Boss are particularly more worthwhile investing than the other - this will differ depending on class, playstyle and personal preferences.
+    <h3>Defense</h3>
+    When considering mob's defense values, the formula is altered slightly. We do not yet have full knowledge of how those stats function, as it is obscured from us as players
+    and can behave in odd manners, but for an approximate understanding of how defense affects your damage, there are three variables to be aware of:
+    <br>
+    - <strong>Defense Scaling</strong>: This value directly affects your Attack and Strength and acts as a multiplier, with a value between 0% and 100%, reducing those stats. 
+    Static Damage and Added Damage ignore this value and are not reduced.
+    <br>
+    - <strong>Flat Defense</strong>: This is a flat value that is subtracted from your base after adding your other base stats and scales with Strength Factor, thus more strongly affects your summon skills.
+    <br>
+    - <strong>Damage Mitigation</strong>: This is a final multiplier occuring at the end of the damage calculation, reducing your damage by a set percentage. Similarly to Defense Scaling, Damage Mitigation can go anywhere from 0% to 100%.
+    <br><br>
+    With those variables in mind, the damage formula when accounting for defense would be:
+    <br><br>
+    <!-- base, multipliers, damage full formulas -->
+    <img src="./assets/formula_base_full.png" alt="">
+    <br><br>
+    <img src="./assets/formula_multipliers_weighted.png" alt="">
+    <br><br>
+    <img src="./assets/formula_damage_full.png" alt="">
+    <br><br>
+    Note that we don't have direct access to how those values change from mob to mob and are collected from testing in-game, so when using this calculator
+    to calculate damage versus mobs with defense, please understand that the values are but approximations and might differ from a realistic scenario. 
+    <br><br>
+    In this context, within configurations there are three options to choose to calculate your damage:
+    <br>
+    - <strong>Soft Dummy</strong>: The soft dummy in the fight arena. Has zero defense in every aspect. Formula is more accurate for this one.
+    <br>
+    - <strong>Durable Dummy</strong>: The durable dummies in the fight arena. Has a small amount of defenses, but large mitigation. Will be changed in 7k update.
+    <br>
+    - <strong>7k Normal Mob</strong>: [WIP] Normal mobs found within the 7000 dungeon in normal mode. These mobs will have defense scaling, damage mitigation and a small amount of flat defense.
+    <br>
+    - <strong>7k Boss Mob</strong>: [WIP] The boss found within the 7000 dungeon, before any phase changes. The boss will have defense scaling, greater damage mitigation and a large amount of flat defense.
+    <br><br>
+
+    Due to the large amount of flat defense on the boss mob, you might notice your summon skills hitting for much less than your direct skills.
+
+  </div>
+
   <!-- general configs block -->
+  <!-- to add: export button, reset stats button -->
   <div v-if="displayWindow['config']" class="container config-block">
     <div class="stat-block">
       <h2 class="damage-block">Settings</h2>
@@ -724,8 +829,9 @@ export default {
       <li class="input-container">
         <span class="input-text">Target</span>
         <span>
-          <select>
+          <select v-model="settings['target']" @change="updateDefenses">
             <option value="soft">Soft Dummy</option>
+            <option value="durable">Durable Dummy</option>
             <!-- <option value="normal">7k Normal Mob</option>
             <option value="boss">7k Boss</option> -->
           </select>
