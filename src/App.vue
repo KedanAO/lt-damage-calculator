@@ -1,102 +1,23 @@
 <script>
 import { applyChanges, calculateDamage, compareDamage, getAverageDamage, calculateEquivalenceIncrease } from './utils/ltdc.js'
 import buffs from './utils/buffs.js'
+import {defaultStats, defaultStatsA, defaultStatsB, defaultSettings, defaultSelectedBuffs} from './utils/defaults.js'
 
 export default {
   data() {
     return {
       // data that is saved utilizing localStorage
-      stats: {
-        'strength': [2747887, 385],
-        'attack': [33467, 388],
-        'critical': [4844, 132],
-        'minimum': [2990, 120],
-        'maximum': [4866, 126],
-        'static': [620984, 187],
-        'normalAdded': [271050, 103],
-        'bossAdded': [395788, 100],
-        'normalAmp': [55, 100],
-        'bossAmp': [48.6, 100]
-      },
-      statsA: {
-        'strength': ['', ''],
-        'attack': ['', ''],
-        'critical': ['', ''],
-        'minimum': ['', ''],
-        'maximum': ['', ''],
-        'static': ['', ''],
-        'normalAdded': ['', ''],
-        'bossAdded': ['', ''],
-        'normalAmp': ['', ''],
-        'bossAmp': ['', ''],
-      },
-      statsB: {
-        'strength': ['', ''],
-        'attack': ['', ''],
-        'critical': ['', ''],
-        'minimum': ['', ''],
-        'maximum': ['', ''],
-        'static': ['', ''],
-        'normalAdded': ['', ''],
-        'bossAdded': ['', ''],
-        'normalAmp': ['', ''],
-        'bossAmp': ['', ''],
-      },
+      stats: {},
+      statsA: {},
+      statsB: {},
       defenses: {
         'multiplier': 1,
         'flat': 0,
         'mitigation': 0
       },
-      settings: {
-        'aF': 170,
-        'sF': 1.32,
-        'minWeight': 0.3,
-        'bossWeight': 0.5,
-        'target': 'soft'
-      },
+      settings: {},
       buffs,
-      selectedBuffs: {
-        'Minimal': {
-          'single': {
-            'Nightmare Relic +4': true,
-            'Guild Relic +9': true,
-            'Richiring': true,
-            'Herald of Fragments': true,
-            'Book Buffs': true,
-            'Flask of Battle': true,
-            'Sweet Mutant Special': true,
-            'Starkeeper Title': true,
-          },
-        },
-        'Midterm': {
-          'single': {
-            'Hero Nostrum I': true,
-            'Hero Nostrum II': true,
-            'Guild Banana/Juice': true,
-          },
-        },
-        'Maxed': {
-          'single': {
-            'Sweet Mutant Critical': false,
-            'Sweet Mutant Maximum': false,
-            'Fatal Perfume': false,
-            'Fisherman Blessing': false,
-          },
-        },
-        'Event': {
-          'single': {
-            'Long Eastland Ice Tea': false,
-            'Fun Blessing': false,
-            'Special Combat Potion': false,
-          },
-        },
-        'Party': {
-          'single': {
-            'Popstar Buffs': false,
-            'Black Anima Buffs': false,
-          },
-        },
-      },
+      selectedBuffs: {},
       
       // names and values that will be displayed
       statNames: {
@@ -112,24 +33,24 @@ export default {
         'bossAmp': 'Boss Amplification'
       },
       damage: {
-        avg: ['0b000m', '0b000m', '0b000m'],
-        normal: ['0b000m', '0b000m', '0b000m'],
-        boss: ['0b000m', '0b000m', '0b000m']
+        avg: ['---', '---', '---'],
+        normal: ['---', '---', '---'],
+        boss: ['---', '---', '---']
       },
       increases: {
-        avg: ['-0.1', '0.1'],
-        normal: ['0.05', '0.05'],
-        boss: ['0.05', '0.05']
+        avg: ['---', '---'],
+        normal: ['---', '---'],
+        boss: ['---', '---']
       },
       buffedDamage: {
-        avg: ['0b000m', '0b000m', '0b000m'],
-        normal: ['0b000m', '0b000m', '0b000m'],
-        boss: ['0b000m', '0b000m', '0b000m']
+        avg: ['---', '---', '---'],
+        normal: ['---', '---', '---'],
+        boss: ['---', '---', '---']
       },
       buffedIncreases: {
-        avg: ['-0.1', '0.1'],
-        normal: ['0.05', '0.05'],
-        boss: ['0.05', '0.05']
+        avg: ['---', '---'],
+        normal: ['---', '---'],
+        boss: ['---', '---']
       },
       equivalencePercent: {
         'strength': ['', ''],
@@ -165,11 +86,14 @@ export default {
         'buffs': false,
         'config': false,
         'info': false,
-        'equivalence': false
+        'equivalence': false,
+        'export': false,
       },
       tooltip: false,
       tooltipPosition: [0,0],
       tooltipText: '',
+      expText: '',
+      expInfo: '',
     }
   },
 
@@ -198,6 +122,14 @@ export default {
       window.localStorage.setItem('ltdcStatsB', JSON.stringify(this.statsB))
       window.localStorage.setItem('ltdcSelectedBuffs', JSON.stringify(this.selectedBuffs))
       window.localStorage.setItem('ltdcSettings', JSON.stringify(this.settings))
+    },
+    initializeData() {
+      // clone default data
+      this.stats = structuredClone(defaultStats)
+      this.statsA = structuredClone(defaultStatsA)
+      this.statsB = structuredClone(defaultStatsB)
+      this.settings = structuredClone(defaultSettings)
+      this.selectedBuffs = structuredClone(defaultSelectedBuffs)
     },
 
     // imports
@@ -506,6 +438,11 @@ export default {
 
       this.updateAll()
     },
+
+    setSkillFactor(aF, sF) {
+      this.settings.aF = aF
+      this.settings.sF = sF
+    },
     
     // run all updates
     updateAll() {
@@ -514,6 +451,35 @@ export default {
       this.updateIncreases()
       this.updateBuffs()
       this.updateEquivalences()
+    },
+
+    resetAll() {
+      this.initializeData()
+      this.updateDefenses()
+    },
+
+    importData() {
+      try {
+        let importedData = JSON.parse(this.expText)
+
+        this.stats = structuredClone(importedData.stats)
+        this.statsA = structuredClone(importedData.statsA)
+        this.statsB = structuredClone(importedData.statsB)
+        this.settings = structuredClone(importedData.settings)
+        this.selectedBuffs = structuredClone(importedData.selectedBuffs)
+
+        this.expInfo = 'Imported.'
+      } catch (error) {
+        this.expInfo = 'Failed to import.'
+      }
+    },
+
+    exportData() {
+      const exp = { stats: this.stats, statsA: this.statsA, statsB: this.statsB, settings: this.settings, selectedBuffs: this.selectedBuffs }
+      
+      const str = JSON.stringify(exp)
+
+      this.expText = str
     },
 
     // for handling tooltip display
@@ -532,6 +498,7 @@ export default {
   },
 
   mounted() {
+    this.initializeData()
     this.readData()
     this.updateDefenses()
     this.updateAll()
@@ -546,11 +513,17 @@ export default {
 
 <template>
   <!-- buttons to bring up additional windows -->
-  <div>
-    <span><button @click="selectDisplayWindow('info')">Information</button></span>
-    <span><button @click="selectDisplayWindow('config')">Config</button></span>
-    <span><button @click="selectDisplayWindow('buffs')">Buffs</button></span>
-    <span><button @click="selectDisplayWindow('equivalence')">Equivalence Tables</button></span>
+  <div class="top-buttons">
+    <div class="config-buttons">
+      <button @click="selectDisplayWindow('info')">Information</button>
+      <button @click="selectDisplayWindow('config')">Additional Parameters</button>
+      <button @click="selectDisplayWindow('buffs')">Buffs</button>
+      <button @click="selectDisplayWindow('equivalence')">Equivalence Tables</button>
+    </div>
+    <div class="data-buttons">
+      <button @click="selectDisplayWindow('export')">Export/Import</button>
+      <button @click="resetAll()">Reset All</button>
+    </div>
   </div>
   <!-- stat blocks displaying stat inputs and damage calculations -->
   <div class="container">
@@ -752,7 +725,7 @@ export default {
     For more information on factors, the values of the factors for each class' skills and recommended factors to use within the calculator for each class, please see: (link to factor research)
     <h3>Minimum Weight</h3>
     When actually dealing damage in the game, every hit will roll a random value between your Minimum and Maximum damage and utilize that value for that specific hit.
-    For the purposes of this calculator, we utilize a <em>Minimum Weight</em> value within the configurations to determine how much both of those stats influence in the
+    For the purposes of this calculator, we utilize a <em>Minimum Weight</em> value within the additional parameters to determine how much both of those stats influence in the
     average damage:
     <br><br>
     <!-- full multiplier formula -->
@@ -761,7 +734,7 @@ export default {
     To consider maximum damage, set it to 0%. General scenarios, set it to 50%. Considering optimal usage of LL6, set it to 30%.
     <h3>Boss Weight</h3>
     The average damage displayed under each stat block refers to a generic average amount of damage you'd do in your runs, between normal and boss damage. This value is simply
-    a weighted average between Normal and Boss damage, set by the Boss Weight within the configurations. In the current endgame meta (7k), it's recommended to set it to 50%.
+    a weighted average between Normal and Boss damage, set by the Boss Weight within the additional parameters. In the current endgame meta, it's recommended to set it to 50%.
     Note that this does not mean Normal or Boss are particularly more worthwhile investing than the other - this will differ depending on class, playstyle and personal preferences.
     <h3>Defense</h3>
     When considering mob's defense values, the formula is altered slightly. We do not yet have full knowledge of how those stats function, as it is obscured from us as players
@@ -784,9 +757,9 @@ export default {
     <img src="./assets/formula_damage_full.png" alt="">
     <br><br>
     Note that we don't have direct access to how those values change from mob to mob and are collected from testing in-game, so when using this calculator
-    to calculate damage versus mobs with defense, please understand that the values are but approximations and might differ from a realistic scenario. 
+    to calculate damage versus mobs with defense, please understand that the values are but approximations and might differ from a real scenario. 
     <br><br>
-    In this context, within configurations there are three options to choose to calculate your damage:
+    In this context, within the additional parameters there are some options to choose to calculate your damage:
     <br>
     - <strong>Soft Dummy</strong>: The soft dummy in the fight arena. Has zero defense in every aspect. Formula is more accurate for this one.
     <br>
@@ -805,7 +778,13 @@ export default {
   <!-- to add: export button, reset stats button -->
   <div v-if="displayWindow['config']" class="container config-block">
     <div class="stat-block">
-      <h2 class="damage-block">Settings</h2>
+      <h2 class="damage-block">Additional Parameters</h2>
+      <div class='button-spread'>
+        <button @click="setSkillFactor(200, 1)">Direct</button>
+        <button @click="setSkillFactor(400, 1)">Direct High</button>
+        <button @click="setSkillFactor(150, 1.3)">Hybrid</button>
+        <button @click="setSkillFactor(70, 1.6)">Summon</button>
+      </div>
       <li class="input-container">
         <span class="input-text">Strength Factor</span>
         <span><input type="text" inputmode="numeric" class="input-full" v-model.number="settings['sF']"></span>
@@ -849,7 +828,7 @@ export default {
   <!-- buffs window -->
   <div v-if="displayWindow['buffs']" class="buff-block">
     <h2 class='damage-block'>Buffs</h2>
-    <div class='buff-buttons'>
+    <div class='button-spread'>
       <button @click="toggleBuffs('Minimal')">Toggle Minimal</button>
       <button @click="toggleBuffs('Midterm')">Toggle Midterm</button>
       <button @click="toggleBuffs('Maxed')">Toggle Maxed</button>
@@ -907,6 +886,16 @@ export default {
         </tr>
       </table>
     </div>
+  </div>
+
+  <!-- export window -->
+  <div v-if="displayWindow['export']" class="export-block">
+    <textarea v-model="expText" class="export-text"></textarea>
+    <div class="button-spread">
+      <button @click="importData()">Import</button>
+      <button @click="exportData()">Export</button>
+    </div>
+    <span>{{ expInfo }}</span>
   </div>
 
   <!-- tooltip on mouse -->

@@ -114,12 +114,12 @@ body {
   flex-direction: column;
 }
 
-.buff-buttons {
+.button-spread {
   display: grid;
   grid-template-columns: repeat( auto-fit, minmax(150px, 1fr) );
 }
 
-.buff-buttons>button {
+.button-spread>button {
   margin-left: 1em;
   margin-right: 1em;
   margin-bottom: 1em;
@@ -191,6 +191,38 @@ table {
 td, th {
   border: 1px solid #dddddd;
   padding: 8px;
+}
+
+.top-buttons {
+  display: flex;
+  justify-content: space-between;
+}
+
+.config-buttons>button {
+  margin-right: 5px;
+}
+
+.data-buttons>button {
+  margin-left: 25px;
+}
+
+.export-block {
+  position: absolute;
+  top: 50px;
+  right: 5%;
+  border: 1px solid gray;
+  border-radius: 4px;
+  min-width: 500px;
+  background-color: white;
+  padding: 10px 10px 10px 10px;
+
+  display: flex;
+  flex-direction: column;
+}
+
+.export-text {
+  min-height: 100px;
+  margin-bottom: 20px;
 }
 
 #tooltip {
