@@ -1,7 +1,13 @@
 <script>
 import { applyChanges, calculateDamage, compareDamage, getAverageDamage, calculateEquivalenceIncrease } from './utils/ltdc.js'
 import buffs from './utils/buffs.js'
-import {defaultStats, defaultStatsA, defaultStatsB, defaultSettings, defaultSelectedBuffs} from './utils/defaults.js'
+import { defaultStats, defaultStatsA, defaultStatsB, defaultSettings, defaultSelectedBuffs } from './utils/defaults.js'
+
+// todo: 
+// - % increase in buffed damage
+// - improve info window
+// - improve top buttons?
+
 
 export default {
   data() {
@@ -380,6 +386,8 @@ export default {
             break
           case 'Event':
             this.selectedBuffs[tier]['Bungbung'] = swap ? 'Eastland Bungbung Drink' : 'None'
+            this.selectedBuffs[tier]['Summer Combat'] = swap ? 'Critical' : 'None'
+            this.selectedBuffs[tier]['Attendance Drink'] = swap ? 'Critical' : 'None'
             break
         }
       }
@@ -775,7 +783,6 @@ export default {
   </div>
 
   <!-- general configs block -->
-  <!-- to add: export button, reset stats button -->
   <div v-if="displayWindow['config']" class="container config-block">
     <div class="stat-block">
       <h2 class="damage-block">Additional Parameters</h2>

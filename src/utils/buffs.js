@@ -8,6 +8,7 @@ const buffs = {
       'Book Buffs': {'attack':[0,5], 'strength':[0,5], 'critical':[0,5]},
       'Flask of Battle': {'attack':[20,5], 'minimum':[10,0], 'maximum':[10,0], 'strength':[0,15], 'critical':[30,0]},
       'Sweet Mutant Special': {'minimum':[40,0], 'critical':[30,0]},
+      'Starkeeper Critical Damage Booster': {'critical':[25,0]},
       'Starkeeper Title': {'critical':[200,0]},
     },
     'Food': {
@@ -31,7 +32,12 @@ const buffs = {
       'Sweet Mutant Critical': {'critical':[40,0]},
       'Sweet Mutant Maximum': {'maximum':[40,0]},
       'Fatal Perfume': {'critical':[30,0]},
+      'Long Eastland Ice Tea': {'attack':[30,0], 'critical':[20,0]},
       'Fisherman Blessing': {'critical':[50,0]},
+      'Strength/Magic Holy Water': {'strength':[0,10]},
+      'Dual Critical Damage I Holy Water': {'critical':[40,0]},
+      'Dual Critical Damage II Holy Water': {'critical':[40,0]},
+      'Attack/Elemental Intensity Holy Water': {'attack':[0,10]},
     },
     'Booster': {
       'Union Critical Booster': {'critical':[120,0]},
@@ -44,19 +50,34 @@ const buffs = {
   },
   'Event': {
     'single': {
-      'Long Eastland Ice Tea': {'attack':[30,0], 'critical':[20,0]},
       'Fun Blessing': {'maximum':[40,0], 'critical':[60,0]},
       'Special Combat Potion': {'critical':[30,0], 'maximum':[30,0]},
+      'Summer Festival Utility Potion': {'strength':[0,10]},
+      'Space Food': {'attack':[0,5]},
+      'Winter Rations': {'strength':[0,3],'critical':[30,0]},
+      'Valentine Chocolate': {'strength':[0,10]}
     },
     'Bungbung': {
       'Eastland Bungbung Drink': {'attack':[50,0]},
       'Freios Bungbung Drink': {'maximum':[15,0]},
     },
+    'Summer Combat': {
+      'Maximum': {'maximum':[50,0]},
+      'Critical': {'critical':[50,0]},
+    },
+    'Attendance Drink': {
+      'Minimum': {'minimum':[30,0]},
+      'Maximum': {'maximum':[30,0]},
+      'Basic': {'strength':[0,5]},
+      'Critical': {'critical':[30,0]},
+      'Attack/Intensity': {'attack':[0,5]},
+    },
   },
   'Party': {
     'single': {
       'Popstar Buffs': {'strength':[0,12], 'minimum':[40,0], 'maximum':[75,0], 'critical':[30,0]},
-      'Black Anima Buffs': {'attack':[0,10], 'minimum':[0,3], 'maximum':[0,3], 'critical':[0,3]}
+      'Black Anima Buffs': {'attack':[0,10], 'minimum':[0,3], 'maximum':[0,3], 'critical':[0,3]},
+      'Couple':{'strength':[0,10]}
     },
   },
 }

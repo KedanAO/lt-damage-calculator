@@ -55,6 +55,7 @@ export const defaultSelectedBuffs = {
       'Book Buffs': true,
       'Flask of Battle': true,
       'Sweet Mutant Special': true,
+      'Starkeeper Critical Damage Booster': false,
       'Starkeeper Title': true,
     },
   },
@@ -70,20 +71,29 @@ export const defaultSelectedBuffs = {
       'Sweet Mutant Critical': false,
       'Sweet Mutant Maximum': false,
       'Fatal Perfume': false,
+      'Long Eastland Ice Tea': false,
       'Fisherman Blessing': false,
+      'Strength/Magic Holy Water': false,
+      'Dual Critical Damage I Holy Water': false,
+      'Dual Critical Damage II Holy Water': false,
+      'Attack/Elemental Intensity Holy Water': false,
     },
   },
   'Event': {
     'single': {
-      'Long Eastland Ice Tea': false,
       'Fun Blessing': false,
       'Special Combat Potion': false,
+      'Summer Festival Utility Potion': false,
+      'Space Food': false,
+      'Winter Rations': false,
+      'Valentine Chocolate': false
     },
   },
   'Party': {
     'single': {
       'Popstar Buffs': false,
       'Black Anima Buffs': false,
+      'Couple': false,
     },
   },
 }
