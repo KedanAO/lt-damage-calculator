@@ -4,7 +4,6 @@ import buffs from './utils/buffs.js'
 import { defaultStats, defaultStatsA, defaultStatsB, defaultSettings, defaultSelectedBuffs } from './utils/defaults.js'
 
 // todo: 
-// - % increase in buffed damage
 // - improve info window
 // - improve top buttons?
 
@@ -54,9 +53,9 @@ export default {
         boss: ['---', '---', '---']
       },
       buffedIncreases: {
-        avg: ['---', '---'],
-        normal: ['---', '---'],
-        boss: ['---', '---']
+        avg: ['---', '---', '---'],
+        normal: ['---', '---', '---'],
+        boss: ['---', '---', '---']
       },
       equivalencePercent: {
         'strength': ['', ''],
@@ -330,6 +329,8 @@ export default {
       const dmg = this.getDamageNumbers(buffedD, this.statsA, this.statsB)
       const inc = this.getDamageIncreaseNumbers(buffedD, this.statsA, this.statsB)
 
+      const incD = this.getDamageIncreaseNumbers(this.stats, buffStats, buffStats)
+
       this.buffedDamage.normal[0] = dmg.normal[0]
       this.buffedDamage.normal[1] = dmg.normal[1]
       this.buffedDamage.normal[2] = dmg.normal[2]
@@ -340,12 +341,15 @@ export default {
       this.buffedDamage.avg[1] = dmg.avg[1]
       this.buffedDamage.avg[2] = dmg.avg[2]
 
-      this.buffedIncreases.normal[0] = inc.normal[0]
-      this.buffedIncreases.normal[1] = inc.normal[1]
-      this.buffedIncreases.boss[0] = inc.boss[0]
-      this.buffedIncreases.boss[1] = inc.boss[1]
-      this.buffedIncreases.avg[0] = inc.avg[0]
-      this.buffedIncreases.avg[1] = inc.avg[1]
+      this.buffedIncreases.normal[0] = incD.normal[0]
+      this.buffedIncreases.normal[1] = inc.normal[0]
+      this.buffedIncreases.normal[2] = inc.normal[1]
+      this.buffedIncreases.boss[0] = incD.boss[0]
+      this.buffedIncreases.boss[1] = inc.boss[0]
+      this.buffedIncreases.boss[2] = inc.boss[1]
+      this.buffedIncreases.avg[0] = incD.avg[0]
+      this.buffedIncreases.avg[1] = inc.avg[0]
+      this.buffedIncreases.avg[2] = inc.avg[1]
     },
 
     // toggles buffs on/off for each tier or clears all buffs
@@ -566,11 +570,16 @@ export default {
       </div>
       <div class="damage-block">
         <h2>Buffed Damage</h2>
-        <span class="damage-top">{{ buffedDamage['avg'][0] }}</span>
+        <span class="damage-top" :class="{ 'damage-positive': buffedIncreases['avg'][0][0] === '+', 'damage-negative': buffedIncreases['avg'][0][0] === '-' }">{{ buffedIncreases['avg'][0] }}</span>
+        <span class="damage-mid">{{ buffedDamage['avg'][0] }}</span>
         <div class="damage-container">
           <span class="damage-text">Average</span>
         </div>
         <br>
+        <div class="damage-container">
+          <span class="damage-mid" :class="{ 'damage-positive': buffedIncreases['normal'][0][0] === '+', 'damage-negative': buffedIncreases['normal'][0][0] === '-' }">{{ buffedIncreases['normal'][0] }}</span>
+          <span class="damage-mid" :class="{ 'damage-positive': buffedIncreases['boss'][0][0] === '+', 'damage-negative': buffedIncreases['boss'][0][0] === '-' }">{{ buffedIncreases['boss'][0] }}</span>
+        </div>
         <div class="damage-container">
           <span class="damage-mid">{{ buffedDamage['normal'][0] }}</span>
           <span class="damage-mid">{{ buffedDamage['boss'][0] }}</span>
@@ -619,15 +628,15 @@ export default {
       </div>
       <div class="damage-block">
         <h2>Buffed Damage Increase</h2>
-        <span class="damage-top" :class="{ 'damage-positive': buffedIncreases['avg'][0][0] === '+', 'damage-negative': buffedIncreases['avg'][0][0] === '-' }">{{ buffedIncreases['avg'][0] }}</span>
+        <span class="damage-top" :class="{ 'damage-positive': buffedIncreases['avg'][1][0] === '+', 'damage-negative': buffedIncreases['avg'][1][0] === '-' }">{{ buffedIncreases['avg'][1] }}</span>
         <span class="damage-mid">{{ buffedDamage['avg'][1] }}</span>
         <div class="damage-container">
           <span class="damage-text">Average</span>
         </div>
         <br>
         <div class="damage-container">
-          <span class="damage-mid" :class="{ 'damage-positive': buffedIncreases['normal'][0][0] === '+', 'damage-negative': buffedIncreases['normal'][0][0] === '-' }">{{ buffedIncreases['normal'][0] }}</span>
-          <span class="damage-mid" :class="{ 'damage-positive': buffedIncreases['boss'][0][0] === '+', 'damage-negative': buffedIncreases['boss'][0][0] === '-' }">{{ buffedIncreases['boss'][0] }}</span>
+          <span class="damage-mid" :class="{ 'damage-positive': buffedIncreases['normal'][1][0] === '+', 'damage-negative': buffedIncreases['normal'][1][0] === '-' }">{{ buffedIncreases['normal'][1] }}</span>
+          <span class="damage-mid" :class="{ 'damage-positive': buffedIncreases['boss'][1][0] === '+', 'damage-negative': buffedIncreases['boss'][1][0] === '-' }">{{ buffedIncreases['boss'][1] }}</span>
         </div>
         <div class="damage-container">
           <span class="damage-text">{{ buffedDamage['normal'][1] }}</span>
@@ -677,15 +686,15 @@ export default {
       </div>
       <div class="damage-block">
         <h2>Buffed Damage Increase</h2>
-        <span class="damage-top" :class="{ 'damage-positive': buffedIncreases['avg'][1][0] === '+', 'damage-negative': buffedIncreases['avg'][1][0] === '-' }">{{ buffedIncreases['avg'][1] }}</span>
+        <span class="damage-top" :class="{ 'damage-positive': buffedIncreases['avg'][2][0] === '+', 'damage-negative': buffedIncreases['avg'][2][0] === '-' }">{{ buffedIncreases['avg'][2] }}</span>
         <span class="damage-mid">{{ buffedDamage['avg'][2] }}</span>
         <div class="damage-container">
           <span class="damage-text">Average</span>
         </div>
         <br>
         <div class="damage-container">
-          <span class="damage-mid" :class="{ 'damage-positive': buffedIncreases['normal'][1][0] === '+', 'damage-negative': buffedIncreases['normal'][1][0] === '-' }">{{ buffedIncreases['normal'][1] }}</span>
-          <span class="damage-mid" :class="{ 'damage-positive': buffedIncreases['boss'][1][0] === '+', 'damage-negative': buffedIncreases['boss'][1][0] === '-' }">{{ buffedIncreases['boss'][1] }}</span>
+          <span class="damage-mid" :class="{ 'damage-positive': buffedIncreases['normal'][2][0] === '+', 'damage-negative': buffedIncreases['normal'][2][0] === '-' }">{{ buffedIncreases['normal'][2] }}</span>
+          <span class="damage-mid" :class="{ 'damage-positive': buffedIncreases['boss'][2][0] === '+', 'damage-negative': buffedIncreases['boss'][2][0] === '-' }">{{ buffedIncreases['boss'][2] }}</span>
         </div>
         <div class="damage-container">
           <span class="damage-text">{{ buffedDamage['normal'][2] }}</span>
