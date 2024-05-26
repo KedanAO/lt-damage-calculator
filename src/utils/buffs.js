@@ -1,8 +1,6 @@
 const buffs = {
   'Minimal': {
     'single': {
-      'Nightmare Relic +4': {'strength':[0,15], 'attack':[0,5]},
-      'Guild Relic +9': {'static':[0,10]},
       'Richiring': {'critical':[20,0], 'minimum':[20,0], 'maximum':[20,0]},
       'Herald of Fragments': {'attack':[0,3]},
       'Book Buffs': {'attack':[0,5], 'strength':[0,5], 'critical':[0,5]},
@@ -15,12 +13,38 @@ const buffs = {
       'Chicken Soup': {'critical':[25,0]},
       'Fried Eel': {'maximum':[20,0]},
     },
+    'Relic': {
+      'Orb +0': {'strength':[0,10]},
+      'Orb +1': {'strength':[0,11]},
+      'Orb +2': {'strength':[0,12]},
+      'Orb +3': {'strength':[0,13]},
+      'Orb +4': {'strength':[0,14]},
+      'Orb +5': {'strength':[0,15]},
+      'Nightmare +0': {'strength':[0,15], 'attack':[0,1]},
+      'Nightmare +1': {'strength':[0,15], 'attack':[0,2]},
+      'Nightmare +2': {'strength':[0,15], 'attack':[0,3]},
+      'Nightmare +3': {'strength':[0,15], 'attack':[0,4]},
+      'Nightmare +4': {'strength':[0,15], 'attack':[0,5]},
+    },
+    'Guild Relic': {
+      '+0': {'static':[0,1]},
+      '+1': {'static':[0,2]},
+      '+2': {'static':[0,3]},
+      '+3': {'static':[0,4]},
+      '+4': {'static':[0,5]},
+      '+5': {'static':[0,6]},
+      '+6': {'static':[0,7]},
+      '+7': {'static':[0,8]},
+      '+8': {'static':[0,9]},
+      '+9': {'static':[0,10]},
+    },
   },
   'Midterm': {
     'single': {
       'Hero Nostrum I': {'maximum':[15,0], 'critical':[20,0], 'strength':[100,0]},
       'Hero Nostrum II': {'attack':[0,10], 'minimum':[15,0]},
       'Guild Banana/Juice': {'critical':[30,0]},
+      'Alvis Helper Potion': {'strength':[0,3]},
     },
     'Syrup': {
       'Premium Syrup': {'critical':[40,0], 'minimum':[30,0], 'maximum':[30,0], 'strength':[0,3], 'attack':[0,3]},
@@ -38,6 +62,7 @@ const buffs = {
       'Dual Critical Damage I Holy Water': {'critical':[40,0]},
       'Dual Critical Damage II Holy Water': {'critical':[40,0]},
       'Attack/Elemental Intensity Holy Water': {'attack':[0,10]},
+      'Excellent Luck': {'critical':[20,0]},
     },
     'Booster': {
       'Union Critical Booster': {'critical':[120,0]},
@@ -80,6 +105,19 @@ const buffs = {
       'Couple':{'strength':[0,10]}
     },
   },
+  'Skillbooks': {
+    'Attendance': {
+      "King's Attendance": {'strength':[0,10], 'maximum':[10,0]},
+      'I Am An Artisan': {'strength':[0,10], 'minimum':[20,0], 'maximum':[20,0]},
+    },
+    'single': {
+      'Guild Blessing': {'maximum':[10,0], 'critical':[10,0]},
+      'Quiz Master': {'critical':[5,0], 'maximum':[5,0]},
+      "Hunter's Power": {'strength':[0,2], 'maximum':[10,0], 'critical':[10,0]},
+      'Shadow Effect': {'attack':[30,0]},
+      "Attacker's Skill": {'attack':[30,5]},
+    }
+  }
 }
 
 export default buffs;

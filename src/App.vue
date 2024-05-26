@@ -6,6 +6,10 @@ import { defaultStats, defaultStatsA, defaultStatsB, defaultSettings, defaultSel
 // todo: 
 // - improve info window
 // - improve top buttons?
+// - add tooltips to:
+// -- % values (how to calculate)
+// -- additional parameters (refer to Information window)
+// -- what else?
 
 
 export default {
@@ -46,6 +50,18 @@ export default {
         avg: ['---', '---'],
         normal: ['---', '---'],
         boss: ['---', '---']
+      },
+      buffedStats: {
+        'strength': ['', ''],
+        'attack': ['', ''],
+        'critical': ['', ''],
+        'minimum': ['', ''],
+        'maximum': ['', ''],
+        'static': ['', ''],
+        'normalAdded': ['', ''],
+        'bossAdded': ['', ''],
+        'normalAmp': ['', ''],
+        'bossAmp': ['', ''],
       },
       buffedDamage: {
         avg: ['---', '---', '---'],
@@ -326,6 +342,11 @@ export default {
 
       const buffedD = applyChanges(this.stats, buffStats)
 
+      for (let stat in buffedD) {
+        this.buffedStats[stat][0] = buffedD[stat][0].toFixed(2)
+        this.buffedStats[stat][1] = buffedD[stat][1].toFixed(0) + '%'
+      }
+
       const dmg = this.getDamageNumbers(buffedD, this.statsA, this.statsB)
       const inc = this.getDamageIncreaseNumbers(buffedD, this.statsA, this.statsB)
 
@@ -380,6 +401,8 @@ export default {
         switch (tier) {
           case 'Minimal': 
             this.selectedBuffs[tier]['Food'] = swap ? 'Chicken Soup' : 'None'
+            this.selectedBuffs[tier]['Relic'] = swap ? 'Nightmare +4' : 'None'
+            this.selectedBuffs[tier]['Guild Relic'] = swap ? '+9' : 'None'
             break
           case 'Midterm': 
             this.selectedBuffs[tier]['Syrup'] = swap ? 'Advanced Premium Syrup' : 'None'
@@ -393,6 +416,8 @@ export default {
             this.selectedBuffs[tier]['Summer Combat'] = swap ? 'Critical' : 'None'
             this.selectedBuffs[tier]['Attendance Drink'] = swap ? 'Critical' : 'None'
             break
+          case 'Skillbooks':
+            this.selectedBuffs[tier]['Attendance'] = swap ? 'I Am An Artisan' : 'None'
         }
       }
     },
@@ -850,27 +875,41 @@ export default {
       <button @click="toggleBuffs('Maxed')">Toggle Maxed</button>
       <button @click="toggleBuffs('Event')">Toggle Event</button>
       <button @click="toggleBuffs('Party')">Toggle Party</button>
+      <button @click="toggleBuffs('Skillbooks')">Toggle Skillbooks</button>
       <button @click="toggleBuffs('Clear')">Deselect All</button>
     </div>
     <div v-for="tier in Object.keys(buffs)" :key="tier">
       <div class="buff-separator">{{ tier }}</div>
-      <div v-for="buffType in Object.keys(buffs[tier])" :key="buffType" class="buff-tier">
-        <div v-if="buffType === 'single'" v-for="buff in Object.keys(buffs[tier][buffType])" :key="buff" class="buff-individual">
-          <input type="checkbox" :id="buff" :value="buff" v-model="selectedBuffs[tier][buffType][buff]" class="buff" >
-          <label :for="buff" 
-          @mouseenter="tooltip = true; tooltipText = formatBuffTooltip(buffs[tier][buffType][buff])" 
-          @mousemove.self="onMouseMove($event)" @mouseleave="tooltip=false">{{ buff }}</label>
-        </div>
-        <div v-else class="buff-individual">
-          <span 
-          @mouseenter="tooltip = true; tooltipText = formatBuffTooltipMulti(buffs[tier][buffType])" 
-          @mousemove.self="onMouseMove($event)" @mouseleave="tooltip=false">{{ buffType }}:</span>
-          <select v-model="selectedBuffs[tier][buffType]" class="buff">
-            <option disabled value=""></option>
-            <option>None</option>
-            <option v-for="buff in Object.keys(buffs[tier][buffType])" :value="buff">{{ buff }}</option>
-          </select>
-        </div>
+      <div class="buff-tier">
+        <template v-for="buffType in Object.keys(buffs[tier])" :key="buffType">
+          <div v-if="buffType === 'single'" v-for="buff in Object.keys(buffs[tier][buffType])" :key="buff" class="buff-individual">
+            <input type="checkbox" :id="buff" :value="buff" v-model="selectedBuffs[tier][buffType][buff]" class="buff">
+            <label :for="buff" 
+            @mouseenter="tooltip = true; tooltipText = formatBuffTooltip(buffs[tier][buffType][buff])" 
+            @mousemove.self="onMouseMove($event)" @mouseleave="tooltip=false">{{ buff }}</label>
+          </div>
+          <div v-else class="buff-individual">
+            <span 
+            @mouseenter="tooltip = true; tooltipText = formatBuffTooltipMulti(buffs[tier][buffType])" 
+            @mousemove.self="onMouseMove($event)" @mouseleave="tooltip=false">{{ buffType }}:</span>
+            <select v-model="selectedBuffs[tier][buffType]" class="buff">
+              <option disabled value=""></option>
+              <option>None</option>
+              <option v-for="buff in Object.keys(buffs[tier][buffType])" :value="buff">{{ buff }}</option>
+            </select>
+          </div>
+        </template>
+      </div>
+    </div>
+    <div>
+      <div class="buff-separator">Resulting Stats</div>
+      <div class="equivalence-container">
+        <table class="equivalence-table"> 
+        <tr><th>Stat</th><th>Value</th><th>%</th></tr>
+        <tr v-for="stat in Object.keys(buffedStats)">
+          <td>{{ statNames[stat] }}</td><td>{{ buffedStats[stat][0] }}</td><td>{{ buffedStats[stat][1] }}</td>
+        </tr>
+      </table>
       </div>
     </div>
   </div>

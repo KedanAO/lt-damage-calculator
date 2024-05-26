@@ -48,8 +48,6 @@ export const defaultSettings = {
 export const defaultSelectedBuffs = {
   'Minimal': {
     'single': {
-      'Nightmare Relic +4': true,
-      'Guild Relic +9': true,
       'Richiring': true,
       'Herald of Fragments': true,
       'Book Buffs': true,
@@ -58,13 +56,18 @@ export const defaultSelectedBuffs = {
       'Starkeeper Critical Damage Booster': false,
       'Starkeeper Title': true,
     },
+    'Food': 'Chicken Soup',
+    'Relic': 'Nightmare +4',
+    'Guild Relic': '+9',
   },
   'Midterm': {
     'single': {
       'Hero Nostrum I': true,
       'Hero Nostrum II': true,
       'Guild Banana/Juice': true,
+      'Alvis Helper Potion': false
     },
+    'Syrup': 'Advanced Premium Syrup',
   },
   'Maxed': {
     'single': {
@@ -77,6 +80,7 @@ export const defaultSelectedBuffs = {
       'Dual Critical Damage I Holy Water': false,
       'Dual Critical Damage II Holy Water': false,
       'Attack/Elemental Intensity Holy Water': false,
+      'Excellent Luck': false,
     },
   },
   'Event': {
@@ -96,4 +100,13 @@ export const defaultSelectedBuffs = {
       'Couple': false,
     },
   },
+  'Skillbooks': {
+    'single': {
+      'Guild Blessing': false,
+      'Quiz Master': false,
+      "Hunter's Power": false,
+      'Shadow Effect': false,
+      "Attacker's Skill": false,
+    }
+  }
 }
