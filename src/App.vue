@@ -168,8 +168,11 @@ export default {
     formatDamage(damage) {
       if (isNaN(damage)) { return '---' }
 
-      const bil = Math.floor(damage/1000000000)
-      const mil = ((damage/1000000000 % 1).toFixed(3)*1000).toString().padStart(3,'0')
+      let bil = Math.floor(damage/1000000000)
+      let mil = ((damage/1000000000 % 1).toFixed(3)*1000).toString().padStart(3,'0')
+
+      bil = bil > 0 ? bil : 0
+      mil = mil > 0 ? mil : '000'
 
       return `${bil}b${mil}m`
     },
@@ -468,7 +471,7 @@ export default {
       }
       if (this.settings.target === 'durable') {
         newDef.multiplier = 0.6017
-        newDef.flat = 3000000
+        newDef.flat = 500000
         newDef.mitigation = 0.8
       } 
       // add 7k mob/boss...
