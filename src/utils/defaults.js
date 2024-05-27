@@ -64,15 +64,17 @@ export const defaultSelectedBuffs = {
     'single': {
       'Hero Nostrum I': true,
       'Hero Nostrum II': true,
+      'Sweet Mutant Critical': true,
+      'Sweet Mutant Maximum': true,
       'Guild Banana/Juice': true,
-      'Alvis Helper Potion': false
+      'Alvis Helper Potion': false,
     },
+    'Rep Food': 'Reputation Abalone Champon',
     'Syrup': 'Advanced Premium Syrup',
+    'Booster': 'Union Critical Booster',
   },
   'Maxed': {
     'single': {
-      'Sweet Mutant Critical': false,
-      'Sweet Mutant Maximum': false,
       'Fatal Perfume': false,
       'Long Eastland Ice Tea': false,
       'Fisherman Blessing': false,

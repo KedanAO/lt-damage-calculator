@@ -43,18 +43,26 @@ const buffs = {
     'single': {
       'Hero Nostrum I': {'maximum':[15,0], 'critical':[20,0], 'strength':[100,0]},
       'Hero Nostrum II': {'attack':[0,10], 'minimum':[15,0]},
+      'Sweet Mutant Critical': {'critical':[40,0]},
+      'Sweet Mutant Maximum': {'maximum':[40,0]},
       'Guild Banana/Juice': {'critical':[30,0]},
       'Alvis Helper Potion': {'strength':[0,3]},
+    },
+    'Rep Food': {
+      'Reputation Abalone Champon': {'attack':[0,5]},
+      'Reputation Galbijjim': {'static':[0,10]},
     },
     'Syrup': {
       'Premium Syrup': {'critical':[40,0], 'minimum':[30,0], 'maximum':[30,0], 'strength':[0,3], 'attack':[0,3]},
       'Advanced Premium Syrup': {'critical':[60,0], 'minimum':[50,0], 'maximum':[50,0], 'strength':[0,5], 'attack':[0,5]},
     },
+    'Booster': {
+      'Union Critical Booster': {'critical':[120,0]},
+      'Union Damage Booster': {'minimum':[70,0], 'maximum':[70,0]},
+    },
   },
   'Maxed': {
     'single': {
-      'Sweet Mutant Critical': {'critical':[40,0]},
-      'Sweet Mutant Maximum': {'maximum':[40,0]},
       'Fatal Perfume': {'critical':[30,0]},
       'Long Eastland Ice Tea': {'attack':[30,0], 'critical':[20,0]},
       'Fisherman Blessing': {'critical':[50,0]},
@@ -63,14 +71,6 @@ const buffs = {
       'Dual Critical Damage II Holy Water': {'critical':[40,0]},
       'Attack/Elemental Intensity Holy Water': {'attack':[0,10]},
       'Excellent Luck': {'critical':[20,0]},
-    },
-    'Booster': {
-      'Union Critical Booster': {'critical':[120,0]},
-      'Union Damage Booster': {'minimum':[70,0], 'maximum':[70,0]},
-    },
-    'Rep Food': {
-      'Reputation Abalone Champon': {'attack':[0,5]},
-      'Reputation Galbijjim': {'static':[0,10]},
     },
   },
   'Event': {

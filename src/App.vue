@@ -7,9 +7,10 @@ import { defaultStats, defaultStatsA, defaultStatsB, defaultSettings, defaultSel
 // - improve info window
 // - improve top buttons?
 // - add tooltips to:
-// -- % values (how to calculate)
 // -- additional parameters (refer to Information window)
 // -- what else?
+// - edit README.md
+// - implement error catching in updateAll in case saved data is in incorrect format
 
 
 export default {
@@ -115,6 +116,9 @@ export default {
       tooltipText: '',
       expText: '',
       expInfo: '',
+      percentText: 'To calculate, write down your stat as displayed in the stat window\n' +
+        'and then use ascension stats to reduce the stat then use the formula:\n' + 
+        '(Natural Stat - Reduced Stat) / Reduced Amount',
     }
   },
 
@@ -313,21 +317,21 @@ export default {
         'bossAmp': [0, 0],
       }
       for (let tier in this.selectedBuffs) {
-        for (let type in this.selectedBuffs[tier]) {
-          if (type === 'single') {
-            for (let buff in this.selectedBuffs[tier][type]) {
-              if (this.selectedBuffs[tier][type][buff]) { 
-                for (let stat in this.buffs[tier][type][buff]) {
-                  allBuffs[stat][0] += this.buffs[tier][type][buff][stat][0]
-                  allBuffs[stat][1] += this.buffs[tier][type][buff][stat][1]
+        for (let buffType in this.selectedBuffs[tier]) {
+          if (buffType === 'single') {
+            for (let buff in this.selectedBuffs[tier][buffType]) {
+              if (this.selectedBuffs[tier][buffType][buff]) { 
+                for (let stat in this.buffs[tier][buffType][buff]) {
+                  allBuffs[stat][0] += this.buffs[tier][buffType][buff][stat][0]
+                  allBuffs[stat][1] += this.buffs[tier][buffType][buff][stat][1]
                 }
               }
             }
           }
-          else if (this.selectedBuffs[tier][type] !== 'None') {
-            for (let stat in this.buffs[tier][type][this.selectedBuffs[tier][type]]) {
-              allBuffs[stat][0] += this.buffs[tier][type][this.selectedBuffs[tier][type]][stat][0]
-              allBuffs[stat][1] += this.buffs[tier][type][this.selectedBuffs[tier][type]][stat][1]
+          else if (this.selectedBuffs[tier][buffType] !== 'None') {
+            for (let stat in this.buffs[tier][buffType][this.selectedBuffs[tier][buffType]]) {
+              allBuffs[stat][0] += this.buffs[tier][buffType][this.selectedBuffs[tier][buffType]][stat][0]
+              allBuffs[stat][1] += this.buffs[tier][buffType][this.selectedBuffs[tier][buffType]][stat][1]
             }
           }
         }
@@ -406,10 +410,10 @@ export default {
             break
           case 'Midterm': 
             this.selectedBuffs[tier]['Syrup'] = swap ? 'Advanced Premium Syrup' : 'None'
-            break
-          case 'Maxed':
             this.selectedBuffs[tier]['Booster'] = swap ? 'Union Critical Booster' : 'None'
             this.selectedBuffs[tier]['Rep Food'] = swap ? 'Reputation Galbijjim' : 'None'
+            break
+          case 'Maxed':
             break
           case 'Event':
             this.selectedBuffs[tier]['Bungbung'] = swap ? 'Eastland Bungbung Drink' : 'None'
@@ -464,7 +468,7 @@ export default {
       }
       if (this.settings.target === 'durable') {
         newDef.multiplier = 0.6017
-        newDef.flat = 500000
+        newDef.flat = 3000000
         newDef.mitigation = 0.8
       } 
       // add 7k mob/boss...
@@ -568,11 +572,16 @@ export default {
     <div class="stat-block" id="stat-block-default">
       <h2 class="damage-block">Stats</h2>
       <ul>
-        <li class="input-container input-header"><span class="input-text">Stat</span><span class="input-full">Value</span><span class="input-perc">%</span></li>
+        <li class="input-container input-header">
+          <span class="input-text">Stat</span><span class="input-full">Value</span>
+          <span class="input-perc"
+          @mouseenter="tooltip = true; tooltipText = percentText" 
+          @mousemove.self="onMouseMove($event)" @mouseleave="tooltip=false">%</span>
+        </li>
         <li class="input-container" v-for="stat in Object.keys(stats)" :key="stat">
           <span class="input-text">{{ statNames[stat] }}</span>
-          <span class="input-full"><input type="text" inputmode="numeric" class="input-full" v-model.number="stats[stat][0]"></span>
-          <span class="input-perc"><input type="text" inputmode="numeric" class="input-perc" v-model.number="stats[stat][1]"></span>
+          <span class="input-full"><input type="text" inputmode="numeric" class="input-full" v-model.number="stats[stat][0]" :id="stat + '-d-V'"></span>
+          <span class="input-perc"><input type="text" inputmode="numeric" class="input-perc" v-model.number="stats[stat][1]" :id="stat + '-d-P'"></span>
         </li>
       </ul>
       <div class="damage-block">
@@ -624,8 +633,8 @@ export default {
         <li class="input-container input-header"><span class="input-text">Stat</span><span class="input-full">Value</span><span class="input-perc">%</span></li>
         <li class="input-container" v-for="stat in Object.keys(stats)" :key="stat">
           <span class="input-text">{{ statNames[stat] }}</span>
-          <span class="input-full"><input type="text" inputmode="numeric" class="input-full" v-model.number="statsA[stat][0]"></span>
-          <span class="input-perc"><input type="text" inputmode="numeric" class="input-perc" v-model.number="statsA[stat][1]"></span>
+          <span class="input-full"><input type="text" inputmode="numeric" class="input-full" v-model.number="statsA[stat][0]" :id="stat + '-a-V'"></span>
+          <span class="input-perc"><input type="text" inputmode="numeric" class="input-perc" v-model.number="statsA[stat][1]" :id="stat + '-a-P'"></span>
         </li>
       </ul>
       <div class="damage-block">
@@ -682,8 +691,8 @@ export default {
         <li class="input-container input-header"><span class="input-text">Stat</span><span class="input-full">Value</span><span class="input-perc">%</span></li>
         <li class="input-container" v-for="stat in Object.keys(stats)" :key="stat">
           <span class="input-text">{{ statNames[stat] }}</span>
-          <span class="input-full"><input type="text" inputmode="numeric" class="input-full" v-model.number="statsB[stat][0]"></span>
-          <span class="input-perc"><input type="text" inputmode="numeric" class="input-perc" v-model.number="statsB[stat][1]"></span>
+          <span class="input-full"><input type="text" inputmode="numeric" class="input-full" v-model.number="statsB[stat][0]" :id="stat + '-b-V'"></span>
+          <span class="input-perc"><input type="text" inputmode="numeric" class="input-perc" v-model.number="statsB[stat][1]" :id="stat + '-b-P'"></span>
         </li>
       </ul>
       <div class="damage-block">
