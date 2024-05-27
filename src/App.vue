@@ -5,9 +5,10 @@ import { defaultStats, defaultStatsA, defaultStatsB, defaultSettings, defaultSel
 
 // todo: 
 // - improve info window
+// -- add buttons to collapse sections
+// -- add table of contents?
 // - improve top buttons?
 // - add tooltips to:
-// -- additional parameters (refer to Information window)
 // -- what else?
 // - edit README.md
 // - implement error catching in updateAll in case saved data is in incorrect format
@@ -559,7 +560,7 @@ export default {
   <!-- buttons to bring up additional windows -->
   <div class="top-buttons">
     <div class="config-buttons">
-      <button @click="selectDisplayWindow('info')">Information</button>
+      <button @click="selectDisplayWindow('info')">About</button>
       <button @click="selectDisplayWindow('config')">Additional Parameters</button>
       <button @click="selectDisplayWindow('buffs')">Buffs</button>
       <button @click="selectDisplayWindow('equivalence')">Equivalence Tables</button>
@@ -749,9 +750,70 @@ export default {
 
   <!-- information block -->
   <div v-if="displayWindow['info']" class="info-block">
-    <h2>Damage Formula</h2>
+    <h2>Damage Calculator</h2>
     This calculator aims to use your character's stats in order to determine either your average or exact damage to a specific target in specific conditions.
+    <br><br>
+    Insert your stats in the input boxes in the <strong>Stats</strong> section and you will see your resulting average, normal and boss damages displayed below, alongside
+    how much of an effect buffs will have towards your damage. The <strong>Changes A</strong> and <strong>Changes B</strong> sections allow you to insert stats to be added
+    so you can compare different sets of stats and see which one better influences your current damage and buffed damage.
+    <br><br>
+    For more detailed options, such as skill factors, customization of the weight of minimum damage and boss vs normal in the averages, selection of active buffs and selection
+    of enemy target, check the other buttons at the top for <strong>Additional Parameters</strong> and <strong>Buffs</strong>.
+    <br><br>
+    To check how your stats would compare to each other, check the <strong>Equivalence Tables</strong> button.
+    <h3>Additional Parameters</h3>
+    This window allows you to customize the more technical details of the damage calculation process, typically hidden to players.
+    <h4>Strength & Attack Factors</h4>
+    While every skill within LaTale follows the same damage formula, their damage is differentiated by those two factor values which are different for every skill.
+    The buttons allow you to switch between specific presets, or you can manually edit those if you know your specific skill or specific class recommended factors. 
+    For more information on how both of those factors behave, read the damage formula below.
+    <h4>Minimum Weight</h4>
+    When actually dealing damage in the game, every hit will roll a random value between your Minimum and Maximum damage and utilize that value for that specific hit.
+    For the purposes of this calculator, we utilize a <em>Minimum Weight</em> value within the additional parameters to determine how much both of those stats influence in the
+    average damage.
+    <br><br>
+    Typically, the recommended values for Minimum Weight are:
+    <br>- <strong> 0%</strong>: Considering only maximum damage, when LL6 is active or for more accurate damage testing.
+    <br>- <strong>30%</strong>: Considering optimal usage of LL6 when awakened, where you'd use it whenever it's off cooldown within a dungeon run.
+    <br>- <strong>50%</strong>: General scenarios where you don't use LL6 at all.
+    <h4>Boss Weight</h4>
+    The average damage displayed under each stat block refers to a generic average amount of damage you'd do in your runs, between normal and boss damage. This value is simply
+    a weighted average between Normal and Boss damage, set by the Boss Weight. In the current endgame meta (5k, 6k, 7k), it's recommended to set it to 50%.
+    Note that this does not mean Normal or Boss are particularly more worthwhile investing than the other - this will differ depending on class, playstyle and personal preferences.
+    <h4>Target</h4>
+    This option allows you to select a different target which will heavily influence your damage and how each stat increases it due to how the defense mechanics work.
+    <br>The currently available options are:
     <br>
+    - <strong>Soft Dummy</strong>: The soft dummy in the fight arena. Has zero defense in every aspect. Formula is more accurate for this one.
+    <br>
+    - <strong>Durable Dummy</strong>: The durable dummies in the fight arena. Has a small amount of defenses, but large mitigation. Will be changed in 7k update.
+    <br>
+    - <strong>7k Normal Mob</strong>: [WIP] Normal mobs found within the 7000 dungeon in normal mode. These mobs will have defense scaling, damage mitigation and a moderate amount of flat defense.
+    <br>
+    - <strong>7k Boss Mob</strong>: [WIP] The boss found within the 7000 dungeon, before any phase changes. The boss will have defense scaling, greater damage mitigation and a large amount of flat defense.
+    <br><br>
+    For more information about how the calculator considers defense, read the damage formula below.
+    <h3>Buffs</h3>
+    This section allows you to select which buffs you wish to apply for the buffed damage calculations and will show a summary of your post-buff stats at the bottom.
+    <br><br>The buffs are separated in tiers depending on how you can activate them:
+    <br> - <strong>Minimal</strong>: Very cheap buffs that you are likely to have endless amounts of or can activate with ely/purchase from NPCs for a cheap amount.
+    <br> - <strong>Midterm</strong>: Buffs that are not in infinite supply but are easily acquirable through quick farming or purchasing from other players.
+    <br> - <strong>Maxed</strong>: Buffs that are in low supply in the market and thus are expensive or are very difficult to farm for typically.
+    <br> - <strong>Event</strong>: Buffs that are only obtainable through events and cannot reliably be renewed constantly.
+    <br> - <strong>Party</strong>: Buffs that come from partying up with other players that can give them to you.
+    <br> - <strong>Skillbooks</strong>: Timed skills activated on a character-basis through skillbooks. Use this only if you don't have them active and want an estimate of
+    their effect on your stats and damage.
+    <br><br>
+    Use the preset buttons at the top to quickly select or deselect all buffs of a specific tier.
+    <h3>Equivalence Tables</h3>
+    The equivalence tables will display how each of your stats compare to each other, based on the additional parameters and currently applied buffs utilizing the average damage.
+    <h4>DI Equivalence</h4>
+    This table allows you to see how much of a specific stat you'd need to add in order to gain a specific damage increase amount, set in the input box above the table.
+    <h4>Critical Equivalence</h4>
+    This table uses critical damage as a baseline to compare with every other stat, allowing you to set a specific amount of critical damage in the input box above the table
+    to know how much that corresponds to each other stat. Critical damage is utilized as it is the most stable stat in the formula, being a simple multiplier that doesn't get
+    manipulated by any other factors.
+    <h2>Damage Formula</h2>
     From research done by players in the past, the general damage formula has been determined to be as follows, when attacking the soft dummy in the fight arena:
     <br><br>
     <!-- base, multipliers, damage basic formulas -->
@@ -785,11 +847,6 @@ export default {
     <!-- full multiplier formula -->
     <img src="./assets/formula_multipliers_weighted.png" alt="">
     <br><br>
-    To consider maximum damage, set it to 0%. General scenarios, set it to 50%. Considering optimal usage of LL6, set it to 30%.
-    <h3>Boss Weight</h3>
-    The average damage displayed under each stat block refers to a generic average amount of damage you'd do in your runs, between normal and boss damage. This value is simply
-    a weighted average between Normal and Boss damage, set by the Boss Weight within the additional parameters. In the current endgame meta, it's recommended to set it to 50%.
-    Note that this does not mean Normal or Boss are particularly more worthwhile investing than the other - this will differ depending on class, playstyle and personal preferences.
     <h3>Defense</h3>
     When considering mob's defense values, the formula is altered slightly. We do not yet have full knowledge of how those stats function, as it is obscured from us as players
     and can behave in odd manners, but for an approximate understanding of how defense affects your damage, there are three variables to be aware of:
@@ -812,20 +869,6 @@ export default {
     <br><br>
     Note that we don't have direct access to how those values change from mob to mob and are collected from testing in-game, so when using this calculator
     to calculate damage versus mobs with defense, please understand that the values are but approximations and might differ from a real scenario. 
-    <br><br>
-    In this context, within the additional parameters there are some options to choose to calculate your damage:
-    <br>
-    - <strong>Soft Dummy</strong>: The soft dummy in the fight arena. Has zero defense in every aspect. Formula is more accurate for this one.
-    <br>
-    - <strong>Durable Dummy</strong>: The durable dummies in the fight arena. Has a small amount of defenses, but large mitigation. Will be changed in 7k update.
-    <br>
-    - <strong>7k Normal Mob</strong>: [WIP] Normal mobs found within the 7000 dungeon in normal mode. These mobs will have defense scaling, damage mitigation and a small amount of flat defense.
-    <br>
-    - <strong>7k Boss Mob</strong>: [WIP] The boss found within the 7000 dungeon, before any phase changes. The boss will have defense scaling, greater damage mitigation and a large amount of flat defense.
-    <br><br>
-
-    Due to the large amount of flat defense on the boss mob, you might notice your summon skills hitting for much less than your direct skills.
-
   </div>
 
   <!-- general configs block -->
