@@ -38,6 +38,25 @@ const buffs = {
       '+8': {'static':[0,9]},
       '+9': {'static':[0,10]},
     },
+    'Summonable': {
+      'Kardian': {'strength':[3000,0], 'normalAmp':[6,0]},
+      'Erazer': {'strength':[3000,0], 'bossAmp':[6,0]},
+      'Lustral': {'normalAdded':[25000,0], 'static':[20000,0], 'attack':[250,0]},
+      'Beatrice': {'minimum':[90,0], 'maximum':[90,0], 'critical':[90,0]},
+      'Yunia': {'strength':[10000,10]},
+      'Awakened Kardian': {'strength':[10000,0], 'normalAmp':[15,0], 'normalAdded':[75000,20]},
+      'Awakened Erazer': {'strength':[10000,0], 'bossAmp':[15,0], 'bossAdded':[75000,20]},
+      'Awakened Lustral': {'normalAdded':[50000,0], 'static':[40000,5], 'minimum':[50,0], 'attack':[500,5]},
+      'Awakened Beatrice': {'minimum':[180,2], 'maximum':[180,2], 'critical':[180,2]},
+      'Awakened Richiring': {'normalAdded':[25000,0], 'bossAdded':[25000,0]},
+      'Awakened Yunia': {'strength':[20000,20]},
+      'Awakened Aria': {'critical':[100,0]},
+    },
+    "Lustral's Potion of Madness": {
+      'Active': {'critical':[300,0]},
+      'Averaged Effect': {'critical':[100,0]},
+      'Averaged Awakened Effect': {'critical':[164,0]}
+    }
   },
   'Midterm': {
     'single': {
@@ -77,6 +96,7 @@ const buffs = {
     'single': {
       'Fun Blessing': {'maximum':[40,0], 'critical':[60,0]},
       'Special Combat Potion': {'critical':[30,0], 'maximum':[30,0]},
+      'Special Helper Potion': {'strength':[0,2]},
       'Summer Festival Utility Potion': {'strength':[0,10]},
       'Space Food': {'attack':[0,5]},
       'Winter Rations': {'strength':[0,3],'critical':[30,0]},
@@ -116,6 +136,9 @@ const buffs = {
       "Hunter's Power": {'strength':[0,2], 'maximum':[10,0], 'critical':[10,0]},
       'Shadow Effect': {'attack':[30,0]},
       "Attacker's Skill": {'attack':[30,5]},
+      "Dark Dragon's Power": {'strength':[10000,0], 'critical':[50,0], 'maximum':[50,0]},
+      "Master Hero's Mark": {'strength':[0,3]},
+      'Skillbook of Patronage': {'strength':[0,5], 'critical':[15,0]}
     }
   }
 }

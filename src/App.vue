@@ -4,9 +4,13 @@ import buffs from './utils/buffs.js'
 import { defaultStats, defaultStatsA, defaultStatsB, defaultSettings, defaultSelectedBuffs } from './utils/defaults.js'
 
 // todo: 
-// - improve info window
-// -- add buttons to collapse sections
+// - improve about window
+// -- add buttons to collapse sections?
 // -- add table of contents?
+// - add buffs
+// -- summonables
+// -- dark dragon's power, patronage, hero's mark skillbooks
+// - add changelog file and link to it in about section or somewhere else
 // - improve top buttons?
 // - add tooltips to:
 // -- what else?
@@ -411,6 +415,8 @@ export default {
             this.selectedBuffs[tier]['Food'] = swap ? 'Chicken Soup' : 'None'
             this.selectedBuffs[tier]['Relic'] = swap ? 'Nightmare +4' : 'None'
             this.selectedBuffs[tier]['Guild Relic'] = swap ? '+9' : 'None'
+            this.selectedBuffs[tier]['Summonable'] = swap ? 'Awakened Beatrice' : 'None'
+            this.selectedBuffs[tier]["Lustral's Potion of Madness"] = swap ? 'None' : 'None'
             break
           case 'Midterm': 
             this.selectedBuffs[tier]['Syrup'] = swap ? 'Advanced Premium Syrup' : 'None'
@@ -475,7 +481,17 @@ export default {
         newDef.flat = 500000
         newDef.mitigation = 0.8
       } 
-      // add 7k mob/boss...
+      // wip 7k mobs
+      else if (this.settings.target === 'normal') {
+        newDef.multiplier = 0.6017
+        newDef.flat = 1000000
+        newDef.mitigation = 0.5
+      }
+      else if (this.settings.target === 'boss') {
+        newDef.multiplier = 0.6017
+        newDef.flat = 3000000
+        newDef.mitigation = 0.75
+      }
 
       this.defenses.multiplier = newDef.multiplier
       this.defenses.flat = newDef.flat
@@ -761,6 +777,10 @@ export default {
     of enemy target, check the other buttons at the top for <strong>Additional Parameters</strong> and <strong>Buffs</strong>.
     <br><br>
     To check how your stats would compare to each other, check the <strong>Equivalence Tables</strong> button.
+    <br><br>
+    On the top right of the page, there are two additional buttons: <strong>Export/Import</strong> and <strong>Reset All</strong>. You can use those to save your currently
+    inserted stats, parameters and buffs into text form to either load later on or share with others, or to reset all values back to the defaults. Your currently inserted
+    values should also be automatically saved within your current browser as you edit them.
     <h3>Additional Parameters</h3>
     This window allows you to customize the more technical details of the damage calculation process, typically hidden to players.
     <h4>Strength & Attack Factors</h4>
@@ -794,7 +814,8 @@ export default {
     <br><br>
     For more information about how the calculator considers defense, read the damage formula below.
     <h3>Buffs</h3>
-    This section allows you to select which buffs you wish to apply for the buffed damage calculations and will show a summary of your post-buff stats at the bottom.
+    This section allows you to select which buffs you wish to apply for the buffed damage calculations and will show a summary of your post-buff stats at the bottom. You can
+    hover over each buff name to see which stats and how much they add.
     <br><br>The buffs are separated in tiers depending on how you can activate them:
     <br> - <strong>Minimal</strong>: Very cheap buffs that you are likely to have endless amounts of or can activate with ely/purchase from NPCs for a cheap amount.
     <br> - <strong>Midterm</strong>: Buffs that are not in infinite supply but are easily acquirable through quick farming or purchasing from other players.
@@ -834,11 +855,11 @@ export default {
     <br>
     - Attack Factor is present in every skill, typically being higher for direct damage skills and it affects how each skill scales with Attack.
     <br>
-    - Strength Factor is present only in summon skills, affecting how those skills scale with Strength, Static Damage and Added Damage.
+    - Strength Factor is present only in summon skills, affecting how those skills scale with Strength, Static Damage and Added Damage. It is fixed at 1 for other skills.
     <br>
     - Bleed (Additional Damage) scale with the Attack Factor but do not scale with skill levels, except on buffs that have levels such as Demigod's Seres' Grace.
     <br>
-    For more information on factors, the values of the factors for each class' skills and recommended factors to use within the calculator for each class, please see: (link to factor research)
+    For more information on factors, the values of the factors for each class' skills and recommended factors to use within the calculator for each class, please see: <a href="https://docs.google.com/spreadsheets/d/1bG7M5-Te25STBjsiYi0H1dzmLalvaVViuLaxzCHNXTM/edit?usp=sharing">[LaTale] Factor Data</a>
     <h3>Minimum Weight</h3>
     When actually dealing damage in the game, every hit will roll a random value between your Minimum and Maximum damage and utilize that value for that specific hit.
     For the purposes of this calculator, we utilize a <em>Minimum Weight</em> value within the additional parameters to determine how much both of those stats influence in the
@@ -869,6 +890,22 @@ export default {
     <br><br>
     Note that we don't have direct access to how those values change from mob to mob and are collected from testing in-game, so when using this calculator
     to calculate damage versus mobs with defense, please understand that the values are but approximations and might differ from a real scenario. 
+    <h3>Other Stats</h3>
+    <h4>Defense Penetration</h4>
+    The way defense penetration works within the damage formula is rather obscure and not yet completely understood. It has no effects on enemies that have no defense
+    (Soft Dummy), but might display large effects even when enemies have small amounts of defense. When passing 95 penetration, we can generally assume each additional point
+    will be roughly 1% more damage over the previous point. There are slight exceptions - in testing against enemies with high amounts of defense this value might increase
+    slightly, but generally won't pass 1.5%. That said, within the calculator, we will always consider 99 penetration when checking for damage against targets with defense.
+    <h4>Back Attack Damage</h4>
+    Back attack damage only applies when hitting the back side of enemies, which makes it very difficult to utilize in normal situations, only being very effective for classes
+    with high mobility and stuns, or in party play scenarios. Currently, it is not available within the calculator, however, if you are curious as to how back attack damage is
+    applied, Korean players have done some research and come with a conclusion regarding back attack damage, where it'd function as follows:
+    <br><br><img src="./assets/formula_damage_back.png" alt="">
+    <br><br><img src="./assets/formula_back_attack.png" alt="">
+    <br>Where Mod = 1.01 for physical attacks, Mod = 1.013 for magical attacks
+    <br>The value is rounded down after the third decimal
+    <br><br>
+    You can read more in <a href="https://cafe.naver.com/ArticleRead.nhn?clubid=25910938&page=1&menuid=185&boardtype=L&articleid=270470&referrerAllArticles=false">this link</a> (in Korean).
   </div>
 
   <!-- general configs block -->
@@ -907,8 +944,8 @@ export default {
           <select v-model="settings['target']" @change="updateDefenses">
             <option value="soft">Soft Dummy</option>
             <option value="durable">Durable Dummy</option>
-            <!-- <option value="normal">7k Normal Mob</option>
-            <option value="boss">7k Boss</option> -->
+            <option value="normal">7k Normal Mob</option>
+            <option value="boss">7k Boss</option>
           </select>
         </span>
         <span class="input-perc"></span>

@@ -1,14 +1,14 @@
 export const defaultStats = {
-  'strength': [2747887, 385],
-  'attack': [33467, 388],
-  'critical': [4844, 132],
-  'minimum': [2990, 120],
-  'maximum': [4866, 126],
-  'static': [620984, 187],
-  'normalAdded': [271050, 103],
-  'bossAdded': [395788, 100],
-  'normalAmp': [55, 100],
-  'bossAmp': [48.6, 100]
+  'strength': [2772519, 398],
+  'attack': [33611, 398],
+  'critical': [4913, 128],
+  'minimum': [2990, 126],
+  'maximum': [4874, 122],
+  'static': [635888, 210],
+  'normalAdded': [258806, 100],
+  'bossAdded': [415333, 103],
+  'normalAmp': [51.7, 100],
+  'bossAmp': [47.2, 100]
 }
 
 export const defaultStatsA = {
@@ -59,6 +59,7 @@ export const defaultSelectedBuffs = {
     'Food': 'Chicken Soup',
     'Relic': 'Nightmare +4',
     'Guild Relic': '+9',
+    'Summonable': 'Awakened Beatrice',
   },
   'Midterm': {
     'single': {
@@ -89,6 +90,7 @@ export const defaultSelectedBuffs = {
     'single': {
       'Fun Blessing': false,
       'Special Combat Potion': false,
+      'Special Helper Potion': false,
       'Summer Festival Utility Potion': false,
       'Space Food': false,
       'Winter Rations': false,
@@ -109,6 +111,9 @@ export const defaultSelectedBuffs = {
       "Hunter's Power": false,
       'Shadow Effect': false,
       "Attacker's Skill": false,
+      "Dark Dragon's Power": false,
+      "Master Hero's Mark": false,
+      'Skillbook of Patronage': false,
     }
   }
 }
