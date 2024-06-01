@@ -234,6 +234,11 @@ td, th {
   margin-bottom: 20px;
 }
 
+.hide-section {
+  font-size: 12px;
+  font-weight: normal;
+}
+
 #tooltip {
   position: absolute;
   z-index: 1000;

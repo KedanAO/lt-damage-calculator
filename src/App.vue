@@ -5,17 +5,12 @@ import { defaultStats, defaultStatsA, defaultStatsB, defaultSettings, defaultSel
 
 // todo: 
 // - improve about window
-// -- add buttons to collapse sections?
 // -- add table of contents?
-// - add buffs
-// -- summonables
-// -- dark dragon's power, patronage, hero's mark skillbooks
 // - add changelog file and link to it in about section or somewhere else
 // - improve top buttons?
 // - add tooltips to:
 // -- what else?
 // - edit README.md
-// - implement error catching in updateAll in case saved data is in incorrect format
 
 
 export default {
@@ -124,6 +119,18 @@ export default {
       percentText: 'To calculate, write down your stat as displayed in the stat window\n' +
         'and then use ascension stats to reduce the stat then use the formula:\n' + 
         '(Natural Stat - Reduced Stat) / Reduced Amount',
+      infoSections: {
+        'basicsCalc': true,
+        'calculator': true,
+        'formula': true,
+        'parameters': true,
+        'buffs': true,
+        'equivalence': true,
+        'basicsFormula': true,
+        'minimum': true,
+        'defense': true,
+        'other': true,
+      }
     }
   },
 
@@ -555,14 +562,24 @@ export default {
         if (w === selection && !this.displayWindow[w]) { this.displayWindow[w] = true }
         else { this.displayWindow[w] = false }
       }
-    }
+    },
+
+    toggleInfoSection(section) {
+      this.infoSections[section] = !this.infoSections[section]
+    },
   },
 
   mounted() {
     this.initializeData()
-    this.readData()
-    this.updateDefenses()
-    this.updateAll()
+    try {
+      this.readData()
+      this.updateDefenses()
+      this.updateAll()
+    } catch (error) {
+      this.initializeData()
+      this.updateDefenses()
+      this.updateAll()
+    }
   },
 
   updated() {
@@ -766,146 +783,172 @@ export default {
 
   <!-- information block -->
   <div v-if="displayWindow['info']" class="info-block">
-    <h2>Damage Calculator</h2>
-    This calculator aims to use your character's stats in order to determine either your average or exact damage to a specific target in specific conditions.
-    <br><br>
-    Insert your stats in the input boxes in the <strong>Stats</strong> section and you will see your resulting average, normal and boss damages displayed below, alongside
-    how much of an effect buffs will have towards your damage. The <strong>Changes A</strong> and <strong>Changes B</strong> sections allow you to insert stats to be added
-    so you can compare different sets of stats and see which one better influences your current damage and buffed damage.
-    <br><br>
-    For more detailed options, such as skill factors, customization of the weight of minimum damage and boss vs normal in the averages, selection of active buffs and selection
-    of enemy target, check the other buttons at the top for <strong>Additional Parameters</strong> and <strong>Buffs</strong>.
-    <br><br>
-    To check how your stats would compare to each other, check the <strong>Equivalence Tables</strong> button.
-    <br><br>
-    On the top right of the page, there are two additional buttons: <strong>Export/Import</strong> and <strong>Reset All</strong>. You can use those to save your currently
-    inserted stats, parameters and buffs into text form to either load later on or share with others, or to reset all values back to the defaults. Your currently inserted
-    values should also be automatically saved within your current browser as you edit them.
-    <h3>Additional Parameters</h3>
-    This window allows you to customize the more technical details of the damage calculation process, typically hidden to players.
-    <h4>Strength & Attack Factors</h4>
-    While every skill within LaTale follows the same damage formula, their damage is differentiated by those two factor values which are different for every skill.
-    The buttons allow you to switch between specific presets, or you can manually edit those if you know your specific skill or specific class recommended factors. 
-    For more information on how both of those factors behave, read the damage formula below.
-    <h4>Minimum Weight</h4>
-    When actually dealing damage in the game, every hit will roll a random value between your Minimum and Maximum damage and utilize that value for that specific hit.
-    For the purposes of this calculator, we utilize a <em>Minimum Weight</em> value within the additional parameters to determine how much both of those stats influence in the
-    average damage.
-    <br><br>
-    Typically, the recommended values for Minimum Weight are:
-    <br>- <strong> 0%</strong>: Considering only maximum damage, when LL6 is active or for more accurate damage testing.
-    <br>- <strong>30%</strong>: Considering optimal usage of LL6 when awakened, where you'd use it whenever it's off cooldown within a dungeon run.
-    <br>- <strong>50%</strong>: General scenarios where you don't use LL6 at all.
-    <h4>Boss Weight</h4>
-    The average damage displayed under each stat block refers to a generic average amount of damage you'd do in your runs, between normal and boss damage. This value is simply
-    a weighted average between Normal and Boss damage, set by the Boss Weight. In the current endgame meta (5k, 6k, 7k), it's recommended to set it to 50%.
-    Note that this does not mean Normal or Boss are particularly more worthwhile investing than the other - this will differ depending on class, playstyle and personal preferences.
-    <h4>Target</h4>
-    This option allows you to select a different target which will heavily influence your damage and how each stat increases it due to how the defense mechanics work.
-    <br>The currently available options are:
-    <br>
-    - <strong>Soft Dummy</strong>: The soft dummy in the fight arena. Has zero defense in every aspect. Formula is more accurate for this one.
-    <br>
-    - <strong>Durable Dummy</strong>: The durable dummies in the fight arena. Has a small amount of defenses, but large mitigation. Will be changed in 7k update.
-    <br>
-    - <strong>7k Normal Mob</strong>: [WIP] Normal mobs found within the 7000 dungeon in normal mode. These mobs will have defense scaling, damage mitigation and a moderate amount of flat defense.
-    <br>
-    - <strong>7k Boss Mob</strong>: [WIP] The boss found within the 7000 dungeon, before any phase changes. The boss will have defense scaling, greater damage mitigation and a large amount of flat defense.
-    <br><br>
-    For more information about how the calculator considers defense, read the damage formula below.
-    <h3>Buffs</h3>
-    This section allows you to select which buffs you wish to apply for the buffed damage calculations and will show a summary of your post-buff stats at the bottom. You can
-    hover over each buff name to see which stats and how much they add.
-    <br><br>The buffs are separated in tiers depending on how you can activate them:
-    <br> - <strong>Minimal</strong>: Very cheap buffs that you are likely to have endless amounts of or can activate with ely/purchase from NPCs for a cheap amount.
-    <br> - <strong>Midterm</strong>: Buffs that are not in infinite supply but are easily acquirable through quick farming or purchasing from other players.
-    <br> - <strong>Maxed</strong>: Buffs that are in low supply in the market and thus are expensive or are very difficult to farm for typically.
-    <br> - <strong>Event</strong>: Buffs that are only obtainable through events and cannot reliably be renewed constantly.
-    <br> - <strong>Party</strong>: Buffs that come from partying up with other players that can give them to you.
-    <br> - <strong>Skillbooks</strong>: Timed skills activated on a character-basis through skillbooks. Use this only if you don't have them active and want an estimate of
-    their effect on your stats and damage.
-    <br><br>
-    Use the preset buttons at the top to quickly select or deselect all buffs of a specific tier.
-    <h3>Equivalence Tables</h3>
-    The equivalence tables will display how each of your stats compare to each other, based on the additional parameters and currently applied buffs utilizing the average damage.
-    <h4>DI Equivalence</h4>
-    This table allows you to see how much of a specific stat you'd need to add in order to gain a specific damage increase amount, set in the input box above the table.
-    <h4>Critical Equivalence</h4>
-    This table uses critical damage as a baseline to compare with every other stat, allowing you to set a specific amount of critical damage in the input box above the table
-    to know how much that corresponds to each other stat. Critical damage is utilized as it is the most stable stat in the formula, being a simple multiplier that doesn't get
-    manipulated by any other factors.
-    <h2>Damage Formula</h2>
-    From research done by players in the past, the general damage formula has been determined to be as follows, when attacking the soft dummy in the fight arena:
-    <br><br>
-    <!-- base, multipliers, damage basic formulas -->
-    <img src="./assets/formula_base_basic.png" alt="">
-    <br><br>
-    <img src="./assets/formula_multipliers_basic.png" alt="">
-    <br><br>
-    <img src="./assets/formula_damage_basic.png" alt="">
-    <br><br>
-    First, there are two main components: the base, concerning stats which are additive, which consists of Attack/Intensity (referred to as simply Attack within this
-    explanation), Strength/Magic (similarly, referred to as Strength), Static Damage and Normal/Boss Added Damage (referred to as simply Added Damage), and the multipliers,
-    consisting of stats that multiply the base and themselves, those being Critical Damage, Minimum/Maximum Damage and Normal/Boss Amplification.
-    <br><br>
-    Most of those values are obtained from our visible stats in-game, except for two: <em>Attack Factor</em> and <em>Strength Factor</em>.
-    Those two values are skill-scaling factors which are different for every skill within the game, but there are a few standard rules:
-    <br>
-    - For both of those values and when applicable, increasing skill levels will increase their value by a fixed amount.
-    <br>
-    - Attack Factor is present in every skill, typically being higher for direct damage skills and it affects how each skill scales with Attack.
-    <br>
-    - Strength Factor is present only in summon skills, affecting how those skills scale with Strength, Static Damage and Added Damage. It is fixed at 1 for other skills.
-    <br>
-    - Bleed (Additional Damage) scale with the Attack Factor but do not scale with skill levels, except on buffs that have levels such as Demigod's Seres' Grace.
-    <br>
-    For more information on factors, the values of the factors for each class' skills and recommended factors to use within the calculator for each class, please see: <a href="https://docs.google.com/spreadsheets/d/1bG7M5-Te25STBjsiYi0H1dzmLalvaVViuLaxzCHNXTM/edit?usp=sharing">[LaTale] Factor Data</a>
-    <h3>Minimum Weight</h3>
-    When actually dealing damage in the game, every hit will roll a random value between your Minimum and Maximum damage and utilize that value for that specific hit.
-    For the purposes of this calculator, we utilize a <em>Minimum Weight</em> value within the additional parameters to determine how much both of those stats influence in the
-    average damage:
-    <br><br>
-    <!-- full multiplier formula -->
-    <img src="./assets/formula_multipliers_weighted.png" alt="">
-    <br><br>
-    <h3>Defense</h3>
-    When considering mob's defense values, the formula is altered slightly. We do not yet have full knowledge of how those stats function, as it is obscured from us as players
-    and can behave in odd manners, but for an approximate understanding of how defense affects your damage, there are three variables to be aware of:
-    <br>
-    - <strong>Defense Scaling</strong>: This value directly affects your Attack and Strength and acts as a multiplier, with a value between 0% and 100%, reducing those stats. 
-    Static Damage and Added Damage ignore this value and are not reduced.
-    <br>
-    - <strong>Flat Defense</strong>: This is a flat value that is subtracted from your base after adding your other base stats and scales with Strength Factor, thus more strongly affects your summon skills.
-    <br>
-    - <strong>Damage Mitigation</strong>: This is a final multiplier occuring at the end of the damage calculation, reducing your damage by a set percentage. Similarly to Defense Scaling, Damage Mitigation can go anywhere from 0% to 100%.
-    <br><br>
-    With those variables in mind, the damage formula when accounting for defense would be:
-    <br><br>
-    <!-- base, multipliers, damage full formulas -->
-    <img src="./assets/formula_base_full.png" alt="">
-    <br><br>
-    <img src="./assets/formula_multipliers_weighted.png" alt="">
-    <br><br>
-    <img src="./assets/formula_damage_full.png" alt="">
-    <br><br>
-    Note that we don't have direct access to how those values change from mob to mob and are collected from testing in-game, so when using this calculator
-    to calculate damage versus mobs with defense, please understand that the values are but approximations and might differ from a real scenario. 
-    <h3>Other Stats</h3>
-    <h4>Defense Penetration</h4>
-    The way defense penetration works within the damage formula is rather obscure and not yet completely understood. It has no effects on enemies that have no defense
-    (Soft Dummy), but might display large effects even when enemies have small amounts of defense. When passing 95 penetration, we can generally assume each additional point
-    will be roughly 1% more damage over the previous point. There are slight exceptions - in testing against enemies with high amounts of defense this value might increase
-    slightly, but generally won't pass 1.5%. That said, within the calculator, we will always consider 99 penetration when checking for damage against targets with defense.
-    <h4>Back Attack Damage</h4>
-    Back attack damage only applies when hitting the back side of enemies, which makes it very difficult to utilize in normal situations, only being very effective for classes
-    with high mobility and stuns, or in party play scenarios. Currently, it is not available within the calculator, however, if you are curious as to how back attack damage is
-    applied, Korean players have done some research and come with a conclusion regarding back attack damage, where it'd function as follows:
-    <br><br><img src="./assets/formula_damage_back.png" alt="">
-    <br><br><img src="./assets/formula_back_attack.png" alt="">
-    <br>Where Mod = 1.01 for physical attacks, Mod = 1.013 for magical attacks
-    <br>The value is rounded down after the third decimal
-    <br><br>
-    You can read more in <a href="https://cafe.naver.com/ArticleRead.nhn?clubid=25910938&page=1&menuid=185&boardtype=L&articleid=270470&referrerAllArticles=false">this link</a> (in Korean).
+    <h2>Damage Calculator <span @click="toggleInfoSection('calculator')" class="hide-section">{{ infoSections['calculator'] ? '[hide]' : '[show]' }}</span></h2>
+    <div v-if="infoSections['calculator']">
+      <h3>Basics <span @click="toggleInfoSection('basicsCalc')" class="hide-section">{{ infoSections['basicsCalc'] ? '[hide]' : '[show]' }}</span></h3>
+      <div v-if="infoSections['basicsCalc']">
+        This calculator aims to use your character's stats in order to determine either your average or exact damage to a specific target in specific conditions.
+        <br><br>
+        Insert your stats in the input boxes in the <strong>Stats</strong> section and you will see your resulting average, normal and boss damages displayed below, alongside
+        how much of an effect buffs will have towards your damage. The <strong>Changes A</strong> and <strong>Changes B</strong> sections allow you to insert stats to be added
+        so you can compare different sets of stats and see which one better influences your current damage and buffed damage.
+        <br><br>
+        For more detailed options, such as skill factors, customization of the weight of minimum damage and boss vs normal in the averages, selection of active buffs and selection
+        of enemy target, check the other buttons at the top for <strong>Additional Parameters</strong> and <strong>Buffs</strong>.
+        <br><br>
+        To check how your stats would compare to each other, check the <strong>Equivalence Tables</strong> button.
+        <br><br>
+        On the top right of the page, there are two additional buttons: <strong>Export/Import</strong> and <strong>Reset All</strong>. You can use those to save your currently
+        inserted stats, parameters and buffs into text form to either load later on or share with others, or to reset all values back to the defaults. Your currently inserted
+        values should also be automatically saved within your current browser as you edit them.
+      </div>
+      <h3>Additional Parameters <span @click="toggleInfoSection('parameters')" class="hide-section">{{ infoSections['parameters'] ? '[hide]' : '[show]' }}</span></h3>
+      <div v-if="infoSections['parameters']">
+        This window allows you to customize the more technical details of the damage calculation process, typically hidden to players.
+        <h4>Strength & Attack Factors</h4>
+        While every skill within LaTale follows the same damage formula, their damage is differentiated by those two factor values which are different for every skill.
+        The buttons allow you to switch between specific presets, or you can manually edit those if you know your specific skill or specific class recommended factors. 
+        For more information on how both of those factors behave, read the damage formula below.
+        <h4>Minimum Weight</h4>
+        When actually dealing damage in the game, every hit will roll a random value between your Minimum and Maximum damage and utilize that value for that specific hit.
+        For the purposes of this calculator, we utilize a <em>Minimum Weight</em> value within the additional parameters to determine how much both of those stats influence in the
+        average damage.
+        <br><br>
+        Typically, the recommended values for Minimum Weight are:
+        <br>- <strong> 0%</strong>: Considering only maximum damage, when LL6 is active or for more accurate damage testing.
+        <br>- <strong>30%</strong>: Considering optimal usage of LL6 when awakened, where you'd use it whenever it's off cooldown within a dungeon run.
+        <br>- <strong>50%</strong>: General scenarios where you don't use LL6 at all.
+        <h4>Boss Weight</h4>
+        The average damage displayed under each stat block refers to a generic average amount of damage you'd do in your runs, between normal and boss damage. This value is simply
+        a weighted average between Normal and Boss damage, set by the Boss Weight. In the current endgame meta (5k, 6k, 7k), it's recommended to set it to 50%.
+        Note that this does not mean Normal or Boss are particularly more worthwhile investing than the other - this will differ depending on class, playstyle and personal preferences.
+        <h4>Target</h4>
+        This option allows you to select a different target which will heavily influence your damage and how each stat increases it due to how the defense mechanics work.
+        <br>The currently available options are:
+        <br>
+        - <strong>Soft Dummy</strong>: The soft dummy in the fight arena. Has zero defense in every aspect. Formula is more accurate for this one.
+        <br>
+        - <strong>Durable Dummy</strong>: The durable dummies in the fight arena. Has a small amount of defenses, but large mitigation. Will be changed in 7k update.
+        <br>
+        - <strong>7k Normal Mob</strong>: [WIP] Normal mobs found within the 7000 dungeon in normal mode. These mobs will have defense scaling, damage mitigation and a moderate amount of flat defense.
+        <br>
+        - <strong>7k Boss Mob</strong>: [WIP] The boss found within the 7000 dungeon, before any phase changes. The boss will have defense scaling, greater damage mitigation and a large amount of flat defense.
+        <br><br>
+        For more information about how the calculator considers defense, read the damage formula below.
+      </div>
+      <h3>Buffs <span @click="toggleInfoSection('buffs')" class="hide-section">{{ infoSections['buffs'] ? '[hide]' : '[show]' }}</span></h3>
+      <div v-if="infoSections['buffs']">
+        This section allows you to select which buffs you wish to apply for the buffed damage calculations and will show a summary of your post-buff stats at the bottom. You can
+        hover over each buff name to see which stats and how much they add.
+        <br><br>The buffs are separated in tiers depending on how you can activate them:
+        <br> - <strong>Minimal</strong>: Very cheap buffs that you are likely to have endless amounts of or can activate with ely/purchase from NPCs for a cheap amount.
+        <br> - <strong>Midterm</strong>: Buffs that are not in infinite supply but are easily acquirable through quick farming or purchasing from other players.
+        <br> - <strong>Maxed</strong>: Buffs that are in low supply in the market and thus are expensive or are very difficult to farm for typically.
+        <br> - <strong>Event</strong>: Buffs that are only obtainable through events and cannot reliably be renewed constantly.
+        <br> - <strong>Party</strong>: Buffs that come from partying up with other players that can give them to you.
+        <br> - <strong>Skillbooks</strong>: Timed skills activated on a character-basis through skillbooks. Use this only if you don't have them active and want an estimate of
+        their effect on your stats and damage.
+        <br><br>
+        Use the preset buttons at the top to quickly select or deselect all buffs of a specific tier.
+        <br><br>
+        For the specific Summonables, they only consider the skills at a maxed level. The Lustral potion is a separate option due to it being activated only part of the time -
+        Active considers the full effect (300 critical damage), while Averaged considers 20 seconds out of 60 seconds activity (100 critical damage) and Averaged Awakened
+        considers 30 seconds out of 55 seconds activity (164 critical damage).
+      </div>
+      <h3>Equivalence Tables <span @click="toggleInfoSection('equivalence')" class="hide-section">{{ infoSections['equivalence'] ? '[hide]' : '[show]' }}</span></h3>
+      <div v-if="infoSections['equivalence']">
+        The equivalence tables will display how each of your stats compare to each other, based on the additional parameters and currently applied buffs utilizing the average damage.
+        <h4>DI Equivalence</h4>
+        This table allows you to see how much of a specific stat you'd need to add in order to gain a specific damage increase amount, set in the input box above the table.
+        <h4>Critical Equivalence</h4>
+        This table uses critical damage as a baseline to compare with every other stat, allowing you to set a specific amount of critical damage in the input box above the table
+        to know how much that corresponds to each other stat. Critical damage is utilized as it is the most stable stat in the formula, being a simple multiplier that doesn't get
+        manipulated by any other factors.
+      </div>
+    </div>
+    <h2>Damage Formula <span @click="toggleInfoSection('formula')" class="hide-section">{{ infoSections['formula'] ? '[hide]' : '[show]' }}</span></h2>
+    <div v-if="infoSections['formula']">
+      <h3>Basics <span @click="toggleInfoSection('basicsFormula')" class="hide-section">{{ infoSections['basicsFormula'] ? '[hide]' : '[show]' }}</span></h3>
+      <div v-if="infoSections['basicsFormula']">
+        From research done by players in the past, the general damage formula has been determined to be as follows, when attacking the soft dummy in the fight arena:
+        <br><br>
+        <!-- base, multipliers, damage basic formulas -->
+        <img src="./assets/formula_base_basic.png" alt="">
+        <br><br>
+        <img src="./assets/formula_multipliers_basic.png" alt="">
+        <br><br>
+        <img src="./assets/formula_damage_basic.png" alt="">
+        <br><br>
+        First, there are two main components: the base, concerning stats which are additive, which consists of Attack/Intensity (referred to as simply Attack within this
+        explanation), Strength/Magic (similarly, referred to as Strength), Static Damage and Normal/Boss Added Damage (referred to as simply Added Damage), and the multipliers,
+        consisting of stats that multiply the base and themselves, those being Critical Damage, Minimum/Maximum Damage and Normal/Boss Amplification.
+        <br><br>
+        Most of those values are obtained from our visible stats in-game, except for two: <em>Attack Factor</em> and <em>Strength Factor</em>.
+        Those two values are skill-scaling factors which are different for every skill within the game, but there are a few standard rules:
+        <br>
+        - For both of those values and when applicable, increasing skill levels will increase their value by a fixed amount.
+        <br>
+        - Attack Factor is present in every skill, typically being higher for direct damage skills and it affects how each skill scales with Attack.
+        <br>
+        - Strength Factor is present only in summon skills, affecting how those skills scale with Strength, Static Damage and Added Damage. It is fixed at 1 for other skills.
+        <br>
+        - Bleed (Additional Damage) scale with the Attack Factor but do not scale with skill levels, except on buffs that have levels such as Demigod's Seres' Grace.
+        <br>
+        For more information on factors, the values of the factors for each class' skills and recommended factors to use within the calculator for each class, please see: <a href="https://docs.google.com/spreadsheets/d/1bG7M5-Te25STBjsiYi0H1dzmLalvaVViuLaxzCHNXTM/edit?usp=sharing">[LaTale] Factor Data</a>
+      </div>
+      <h3>Minimum Weight <span @click="toggleInfoSection('minimum')" class="hide-section">{{ infoSections['minimum'] ? '[hide]' : '[show]' }}</span></h3>
+      <div v-if="infoSections['minimum']">
+        When actually dealing damage in the game, every hit will roll a random value between your Minimum and Maximum damage and utilize that value for that specific hit.
+        For the purposes of this calculator, we utilize a <em>Minimum Weight</em> value within the additional parameters to determine how much both of those stats influence in the
+        average damage:
+        <br><br>
+        <!-- full multiplier formula -->
+        <img src="./assets/formula_multipliers_weighted.png" alt="">
+        <br><br>
+      </div>
+      <h3>Defense <span @click="toggleInfoSection('defense')" class="hide-section">{{ infoSections['defense'] ? '[hide]' : '[show]' }}</span></h3>
+      <div v-if="infoSections['defense']">
+        When considering mob's defense values, the formula is altered slightly. We do not yet have full knowledge of how those stats function, as it is obscured from us as players
+        and can behave in odd manners, but for an approximate understanding of how defense affects your damage, there are three variables to be aware of:
+        <br>
+        - <strong>Defense Scaling</strong>: This value directly affects your Attack and Strength and acts as a multiplier, with a value between 0% and 100%, reducing those stats. 
+        Static Damage and Added Damage ignore this value and are not reduced.
+        <br>
+        - <strong>Flat Defense</strong>: This is a flat value that is subtracted from your base after adding your other base stats and scales with Strength Factor, thus more strongly affects your summon skills.
+        <br>
+        - <strong>Damage Mitigation</strong>: This is a final multiplier occuring at the end of the damage calculation, reducing your damage by a set percentage. Similarly to Defense Scaling, Damage Mitigation can go anywhere from 0% to 100%.
+        <br><br>
+        With those variables in mind, the damage formula when accounting for defense would be:
+        <br><br>
+        <!-- base, multipliers, damage full formulas -->
+        <img src="./assets/formula_base_full.png" alt="">
+        <br><br>
+        <img src="./assets/formula_multipliers_weighted.png" alt="">
+        <br><br>
+        <img src="./assets/formula_damage_full.png" alt="">
+        <br><br>
+        Note that we don't have direct access to how those values change from mob to mob and are collected from testing in-game, so when using this calculator
+        to calculate damage versus mobs with defense, please understand that the values are but approximations and might differ from a real scenario. 
+      </div>
+      <h3>Other Stats <span @click="toggleInfoSection('other')" class="hide-section">{{ infoSections['other'] ? '[hide]' : '[show]' }}</span></h3>
+      <div v-if="infoSections['other']">
+        <h4>Defense Penetration</h4>
+        The way defense penetration works within the damage formula is rather obscure and not yet completely understood. It has no effects on enemies that have no defense
+        (Soft Dummy), but might display large effects even when enemies have small amounts of defense. When passing 95 penetration, we can generally assume each additional point
+        will be roughly 1% more damage over the previous point. There are slight exceptions - in testing against enemies with high amounts of defense this value might increase
+        slightly, but generally won't pass 1.5%. That said, within the calculator, we will always consider 99 penetration when checking for damage against targets with defense.
+        <h4>Back Attack Damage</h4>
+        Back attack damage only applies when hitting the back side of enemies, which makes it very difficult to utilize in normal situations, only being very effective for classes
+        with high mobility and stuns, or in party play scenarios. Currently, it is not available within the calculator, however, if you are curious as to how back attack damage is
+        applied, Korean players have done some research and come with a conclusion regarding back attack damage, where it'd function as follows:
+        <br><br><img src="./assets/formula_damage_back.png" alt="">
+        <br><br><img src="./assets/formula_back_attack.png" alt="">
+        <br>Where Mod = 1.01 for physical attacks, Mod = 1.013 for magical attacks
+        <br>The value is rounded down after the third decimal
+        <br><br>
+        You can read more in <a href="https://cafe.naver.com/ArticleRead.nhn?clubid=25910938&page=1&menuid=185&boardtype=L&articleid=270470&referrerAllArticles=false">this link</a> (in Korean).
+      </div>
+    </div>
   </div>
 
   <!-- general configs block -->
