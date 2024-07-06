@@ -99,7 +99,7 @@ const buffs = {
       'Special Helper Potion': {'strength':[0,2]},
       'Summer Festival Utility Potion': {'strength':[0,10]},
       'Space Food': {'attack':[0,5]},
-      'Winter Rations': {'strength':[0,3],'critical':[30,0]},
+      'Potent Barbeque': {'strength':[0,3],'critical':[30,0]},
       'Valentine Chocolate': {'strength':[0,10]}
     },
     'Bungbung': {

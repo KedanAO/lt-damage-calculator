@@ -93,7 +93,7 @@ export const defaultSelectedBuffs = {
       'Special Helper Potion': false,
       'Summer Festival Utility Potion': false,
       'Space Food': false,
-      'Winter Rations': false,
+      'Potent Barbeque': false,
       'Valentine Chocolate': false
     },
   },

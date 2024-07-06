@@ -6,7 +6,6 @@ import { defaultStats, defaultStatsA, defaultStatsB, defaultSettings, defaultSel
 // todo: 
 // - improve about window
 // -- add table of contents?
-// - add changelog file and link to it in about section or somewhere else
 // - improve top buttons?
 // - add tooltips to:
 // -- what else?
@@ -495,8 +494,8 @@ export default {
         newDef.mitigation = 0.5
       }
       else if (this.settings.target === 'boss') {
-        newDef.multiplier = 0.6017
-        newDef.flat = 3000000
+        newDef.multiplier = 0.4
+        newDef.flat = 1500000
         newDef.mitigation = 0.75
       }
 
@@ -510,6 +509,20 @@ export default {
     setSkillFactor(aF, sF) {
       this.settings.aF = aF
       this.settings.sF = sF
+    },
+
+    clearStats(block) {
+      if (block === 'A') {
+        for (let st in this.statsA) {
+          this.statsA[st][0] = ''
+          this.statsA[st][1] = ''
+        }
+      } else if (block === 'B') {
+        for (let st in this.statsB) {
+          this.statsB[st][0] = ''
+          this.statsB[st][1] = ''
+        }
+      }
     },
     
     // run all updates
@@ -665,7 +678,7 @@ export default {
     </div>
     <!-- changes A -->
     <div class="stat-block" id="stat-block-1">
-      <h2 class="damage-block">Changes A</h2>
+      <h2 class="title"><span></span><span>Changes A</span><button @click="clearStats('A')">Clear</button></h2>
       <ul>
         <li class="input-container input-header"><span class="input-text">Stat</span><span class="input-full">Value</span><span class="input-perc">%</span></li>
         <li class="input-container" v-for="stat in Object.keys(stats)" :key="stat">
@@ -723,7 +736,7 @@ export default {
     </div>
     <!-- changes B -->
     <div class="stat-block" id="stat-block-2">
-      <h2 class="damage-block">Changes B</h2>
+      <h2 class="title"><span></span><span>Changes B</span><button @click="clearStats('B')">Clear</button></h2>
       <ul>
         <li class="input-container input-header"><span class="input-text">Stat</span><span class="input-full">Value</span><span class="input-perc">%</span></li>
         <li class="input-container" v-for="stat in Object.keys(stats)" :key="stat">
@@ -956,10 +969,10 @@ export default {
     <div class="stat-block">
       <h2 class="damage-block">Additional Parameters</h2>
       <div class='button-spread'>
-        <button @click="setSkillFactor(200, 1)">Direct</button>
+        <button @click="setSkillFactor(240, 1)">Direct</button>
         <button @click="setSkillFactor(400, 1)">Direct High</button>
-        <button @click="setSkillFactor(150, 1.3)">Hybrid</button>
-        <button @click="setSkillFactor(70, 1.6)">Summon</button>
+        <button @click="setSkillFactor(170, 1.3)">Hybrid</button>
+        <button @click="setSkillFactor(100, 1.6)">Summon</button>
       </div>
       <li class="input-container">
         <span class="input-text">Strength Factor</span>
