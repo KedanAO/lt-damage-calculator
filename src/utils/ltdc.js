@@ -22,12 +22,12 @@ export function applyChanges(stats, changes){
 
 export function calculateDamage(stats, settings, defenses, enemyType) {
   // base
-  const attack = stats.attack[0] * settings.aF * defenses.multiplier;
-  const strength = stats.strength[0] * defenses.multiplier;
-  const staticDamage = stats.static[0];
-  const added = stats[enemyType + 'Added'][0];
+  const attack = stats.attack[0] * settings.aF * defenses[enemyType].multiplier;
+  const strength = stats.strength[0] * defenses[enemyType].multiplier;
+  const staticDamage = stats.static[0] * defenses[enemyType].multiplierB;
+  const added = stats[enemyType + 'Added'][0] * defenses[enemyType].multiplierB;
 
-  const base = attack + (strength + staticDamage + added - defenses.flat) * settings.sF
+  const base = attack + (strength + staticDamage + added - defenses[enemyType].flat) * settings.sF
 
   // multipliers
   const critical = (stats.critical[0] + 100) / 100;
@@ -37,7 +37,7 @@ export function calculateDamage(stats, settings, defenses, enemyType) {
 
   const multiplier = critical * minmax * amp;
 
-  const resultingDamage = base * multiplier * (1 - defenses.mitigation);
+  const resultingDamage = base * multiplier * (1 - defenses[enemyType].mitigation);
 
   return resultingDamage;
 };
@@ -78,9 +78,9 @@ export function calculateEquivalenceIncrease(stats, settings, defenses, increase
   const m = settings.minWeight;
   const n = settings.bossWeight;
 
-  const o = defenses.flat;
-  const p = defenses.multiplier;
-  const q = defenses.mitigation;
+  const o = defenses.boss.flat;
+  const p = defenses.boss.multiplier;
+  const q = defenses.boss.mitigation;
 
   const r = increasePercent;
 

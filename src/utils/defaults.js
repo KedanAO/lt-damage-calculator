@@ -39,7 +39,7 @@ export const defaultStatsB = {
 
 export const defaultSettings = {
   'aF': 150,
-  'sF': 1.3,
+  'sF': 1.5,
   'minWeight': 0.3,
   'bossWeight': 0.5,
   'target': 'soft'

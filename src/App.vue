@@ -9,6 +9,7 @@ import { defaultStats, defaultStatsA, defaultStatsB, defaultSettings, defaultSel
 // - improve top buttons?
 // - add tooltips to:
 // -- what else?
+// - adjust equivalence table to consider both normal and boss dmg?
 // - edit README.md
 
 
@@ -20,9 +21,18 @@ export default {
       statsA: {},
       statsB: {},
       defenses: {
-        'multiplier': 1,
-        'flat': 0,
-        'mitigation': 0
+        'normal': {
+          'multiplier': 1,
+          'multiplierB': 1,
+          'flat': 0,
+          'mitigation': 0
+        },
+        'boss': {
+          'multiplier': 1,
+          'multiplierB': 1,
+          'flat': 0,
+          'mitigation': 0
+        }
       },
       settings: {},
       buffs,
@@ -280,20 +290,19 @@ export default {
 
       const damageNormal = calculateDamage(st, this.settings, this.defenses, 'normal')
       const damageBoss = calculateDamage(st, this.settings, this.defenses, 'boss')
-      const damageAvg = getAverageDamage(damageNormal, damageBoss, this.settings.bossWeight)
       const damageNormalA = calculateDamage(applyChanges(st, stA), this.settings, this.defenses, 'normal')
       const damageBossA = calculateDamage(applyChanges(st, stA), this.settings, this.defenses, 'boss')
-      const damageAvgA = getAverageDamage(damageNormalA, damageBossA, this.settings.bossWeight)
       const damageNormalB = calculateDamage(applyChanges(st, stB), this.settings, this.defenses, 'normal')
       const damageBossB = calculateDamage(applyChanges(st, stB), this.settings, this.defenses, 'boss')
-      const damageAvgB = getAverageDamage(damageNormalB, damageBossB, this.settings.bossWeight)
 
       const increaseNormalA = compareDamage(damageNormal, damageNormalA)
       const increaseBossA = compareDamage(damageBoss, damageBossA)
-      const increaseAvgA = compareDamage(damageAvg, damageAvgA)
+      const increaseAvgA = getAverageDamage(increaseNormalA, increaseBossA, this.settings.bossWeight)
       const increaseNormalB = compareDamage(damageNormal, damageNormalB)
       const increaseBossB = compareDamage(damageBoss, damageBossB)
-      const increaseAvgB = compareDamage(damageAvg, damageAvgB)
+      const increaseAvgB = getAverageDamage(increaseNormalB, increaseBossB, this.settings.bossWeight)
+
+      console.log(increaseAvgA)
 
       inc.normal[0] = this.formatIncrease(increaseNormalA)
       inc.boss[0] = this.formatIncrease(increaseBossA)
@@ -478,30 +487,52 @@ export default {
 
     updateDefenses() {
       let newDef = {
-        'multiplier': 1,
-        'flat': 0,
-        'mitigation': 0
+        'normal': {
+          'multiplier': 1,
+          'multiplierB': 1,
+          'flat': 0,
+          'mitigation': 0
+        },
+        'boss': {
+          'multiplier': 1,
+          'multiplierB': 1,
+          'flat': 0,
+          'mitigation': 0
+        }
       }
       if (this.settings.target === 'durable') {
-        newDef.multiplier = 0.6017
-        newDef.flat = 500000
-        newDef.mitigation = 0.8
+        newDef.normal.multiplier = 0.6017
+        newDef.normal.multiplierB = 0.6225
+        newDef.normal.flat = 500000
+        newDef.normal.mitigation = 0.8
+
+        newDef.boss.multiplier = 0.6017
+        newDef.boss.multiplierB = 0.6225
+        newDef.boss.flat = 500000
+        newDef.boss.mitigation = 0.8
       } 
       // wip 7k mobs
-      else if (this.settings.target === 'normal') {
-        newDef.multiplier = 0.6017
-        newDef.flat = 1000000
-        newDef.mitigation = 0.5
-      }
-      else if (this.settings.target === 'boss') {
-        newDef.multiplier = 0.4
-        newDef.flat = 1500000
-        newDef.mitigation = 0.75
+      else if (this.settings.target === '7k') {
+        newDef.normal.multiplier = 0.402
+        newDef.normal.multiplierB = 0.413
+        newDef.normal.flat = 500000
+        newDef.normal.mitigation = 0.53
+
+        newDef.boss.multiplier = 0.31
+        newDef.boss.multiplierB = 0.32
+        newDef.boss.flat = 1000000
+        newDef.boss.mitigation = 0.75
       }
 
-      this.defenses.multiplier = newDef.multiplier
-      this.defenses.flat = newDef.flat
-      this.defenses.mitigation = newDef.mitigation
+      this.defenses.normal.multiplier = newDef.normal.multiplier
+      this.defenses.normal.multiplierB = newDef.normal.multiplierB
+      this.defenses.normal.flat = newDef.normal.flat
+      this.defenses.normal.mitigation = newDef.normal.mitigation
+
+      this.defenses.boss.multiplier = newDef.boss.multiplier
+      this.defenses.boss.multiplierB = newDef.boss.multiplierB
+      this.defenses.boss.flat = newDef.boss.flat
+      this.defenses.boss.mitigation = newDef.boss.mitigation
 
       this.updateAll()
     },
@@ -636,14 +667,14 @@ export default {
       </ul>
       <div class="damage-block">
         <h2>Damage</h2>
-        <span class="damage-top">{{ damage['avg'][0] }}</span>
+        <!-- <span class="damage-top">{{ damage['avg'][0] }}</span>
         <div class="damage-container">
           <span class="damage-text">Average</span>
         </div>
-        <br>
+        <br> -->
         <div class="damage-container">
-          <span class="damage-mid">{{ damage['normal'][0] }}</span>
-          <span class="damage-mid">{{ damage['boss'][0] }}</span>
+          <span class="damage-top">{{ damage['normal'][0] }}</span>
+          <span class="damage-top">{{ damage['boss'][0] }}</span>
         </div>
         <div class="damage-container">
           <span class="damage-text">Normal</span>
@@ -655,7 +686,7 @@ export default {
       <div class="damage-block">
         <h2>Buffed Damage</h2>
         <span class="damage-top" :class="{ 'damage-positive': buffedIncreases['avg'][0][0] === '+', 'damage-negative': buffedIncreases['avg'][0][0] === '-' }">{{ buffedIncreases['avg'][0] }}</span>
-        <span class="damage-mid">{{ buffedDamage['avg'][0] }}</span>
+        <!-- <span class="damage-mid">{{ buffedDamage['avg'][0] }}</span> -->
         <div class="damage-container">
           <span class="damage-text">Average</span>
         </div>
@@ -690,7 +721,7 @@ export default {
       <div class="damage-block">
         <h2>Damage Increase</h2>
         <span class="damage-top" :class="{ 'damage-positive': increases['avg'][0][0] === '+', 'damage-negative': increases['avg'][0][0] === '-' }">{{ increases['avg'][0] }}</span>
-        <span class="damage-mid">{{ damage['avg'][1] }}</span>
+        <!-- <span class="damage-mid">{{ damage['avg'][1] }}</span> -->
         <div class="damage-container">
           <span class="damage-text">Average</span>
         </div>
@@ -713,7 +744,7 @@ export default {
       <div class="damage-block">
         <h2>Buffed Damage Increase</h2>
         <span class="damage-top" :class="{ 'damage-positive': buffedIncreases['avg'][1][0] === '+', 'damage-negative': buffedIncreases['avg'][1][0] === '-' }">{{ buffedIncreases['avg'][1] }}</span>
-        <span class="damage-mid">{{ buffedDamage['avg'][1] }}</span>
+        <!-- <span class="damage-mid">{{ buffedDamage['avg'][1] }}</span> -->
         <div class="damage-container">
           <span class="damage-text">Average</span>
         </div>
@@ -748,7 +779,7 @@ export default {
       <div class="damage-block">
         <h2>Damage Increase</h2>
         <span class="damage-top" :class="{ 'damage-positive': increases['avg'][1][0] === '+', 'damage-negative': increases['avg'][1][0] === '-' }">{{ increases['avg'][1] }}</span>
-        <span class="damage-mid">{{ damage['avg'][2] }}</span>
+        <!-- <span class="damage-mid">{{ damage['avg'][2] }}</span> -->
         <div class="damage-container">
           <span class="damage-text">Average</span>
         </div>
@@ -771,7 +802,7 @@ export default {
       <div class="damage-block">
         <h2>Buffed Damage Increase</h2>
         <span class="damage-top" :class="{ 'damage-positive': buffedIncreases['avg'][2][0] === '+', 'damage-negative': buffedIncreases['avg'][2][0] === '-' }">{{ buffedIncreases['avg'][2] }}</span>
-        <span class="damage-mid">{{ buffedDamage['avg'][2] }}</span>
+        <!-- <span class="damage-mid">{{ buffedDamage['avg'][2] }}</span> -->
         <div class="damage-container">
           <span class="damage-text">Average</span>
         </div>
@@ -843,9 +874,7 @@ export default {
         <br>
         - <strong>Durable Dummy</strong>: The durable dummies in the fight arena. Has a small amount of defenses, but large mitigation. Will be changed in 7k update.
         <br>
-        - <strong>7k Normal Mob</strong>: [WIP] Normal mobs found within the 7000 dungeon in normal mode. These mobs will have defense scaling, damage mitigation and a moderate amount of flat defense.
-        <br>
-        - <strong>7k Boss Mob</strong>: [WIP] The boss found within the 7000 dungeon, before any phase changes. The boss will have defense scaling, greater damage mitigation and a large amount of flat defense.
+        - <strong>7k Mobs</strong>: [WIP] Mobs found within the 7000 dungeon in normal mode. These mobs will have defense scaling, damage mitigation and a moderate amount of flat defense, the boss having a greater amount of all of those.
         <br><br>
         For more information about how the calculator considers defense, read the damage formula below.
       </div>
@@ -971,8 +1000,8 @@ export default {
       <div class='button-spread'>
         <button @click="setSkillFactor(240, 1)">Direct</button>
         <button @click="setSkillFactor(400, 1)">Direct High</button>
-        <button @click="setSkillFactor(170, 1.3)">Hybrid</button>
-        <button @click="setSkillFactor(100, 1.6)">Summon</button>
+        <button @click="setSkillFactor(150, 1.5)">Hybrid</button>
+        <button @click="setSkillFactor(80, 1.8)">Summon</button>
       </div>
       <li class="input-container">
         <span class="input-text">Strength Factor</span>
@@ -999,9 +1028,8 @@ export default {
         <span>
           <select v-model="settings['target']" @change="updateDefenses">
             <option value="soft">Soft Dummy</option>
-            <option value="durable">Durable Dummy</option>
-            <option value="normal">7k Normal Mob</option>
-            <option value="boss">7k Boss</option>
+            <option value="durable">Durable Dummies</option>
+            <option value="7k">7k Mobs</option>
           </select>
         </span>
         <span class="input-perc"></span>
