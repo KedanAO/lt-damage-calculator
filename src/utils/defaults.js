@@ -1,14 +1,14 @@
 export const defaultStats = {
-  'strength': [2772519, 398],
-  'attack': [33611, 398],
-  'critical': [4913, 128],
-  'minimum': [2990, 126],
-  'maximum': [4874, 122],
-  'static': [635888, 210],
-  'normalAdded': [258806, 100],
-  'bossAdded': [415333, 103],
-  'normalAmp': [51.7, 100],
-  'bossAmp': [47.2, 100]
+  'strength': [3321579, 436],
+  'attack': [33863, 396],
+  'critical': [5332, 126],
+  'minimum': [3293, 124],
+  'maximum': [5310, 120],
+  'static': [798324, 212],
+  'normalAdded': [256147, 100],
+  'bossAdded': [657511, 115],
+  'normalAmp': [53.0, 100],
+  'bossAmp': [51.7, 100]
 }
 
 export const defaultStatsA = {
@@ -83,7 +83,9 @@ export const defaultSelectedBuffs = {
       'Dual Critical Damage I Holy Water': false,
       'Dual Critical Damage II Holy Water': false,
       'Attack/Elemental Intensity Holy Water': false,
+      'Dual Damage Holy Water': false,
       'Excellent Luck': false,
+      'Adventure Battle Potion': false,
     },
   },
   'Event': {
@@ -94,7 +96,8 @@ export const defaultSelectedBuffs = {
       'Summer Festival Utility Potion': false,
       'Space Food': false,
       'Potent Barbeque': false,
-      'Valentine Chocolate': false
+      'Valentine Chocolate': false,
+      'Ham and Egg Toast': false,
     },
   },
   'Party': {

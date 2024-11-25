@@ -89,7 +89,9 @@ const buffs = {
       'Dual Critical Damage I Holy Water': {'critical':[40,0]},
       'Dual Critical Damage II Holy Water': {'critical':[40,0]},
       'Attack/Elemental Intensity Holy Water': {'attack':[0,10]},
+      'Dual Damage Holy Water': {'minimum':[30,0],'maximum':[30,0]},
       'Excellent Luck': {'critical':[20,0]},
+      'Adventure Battle Potion': {'strength':[5000,0]},
     },
   },
   'Event': {
@@ -100,7 +102,8 @@ const buffs = {
       'Summer Festival Utility Potion': {'strength':[0,10]},
       'Space Food': {'attack':[0,5]},
       'Potent Barbeque': {'strength':[0,3],'critical':[30,0]},
-      'Valentine Chocolate': {'strength':[0,10]}
+      'Valentine Chocolate': {'strength':[0,10]},
+      'Ham and Egg Toast': {'critical':[20,0],'attack':[0,5]}
     },
     'Bungbung': {
       'Eastland Bungbung Drink': {'attack':[50,0]},

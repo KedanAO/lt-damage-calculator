@@ -50,7 +50,7 @@ export function getAverageDamage(normalDamage, bossDamage, weight) {
   return normalDamage * (1-weight) + bossDamage * weight;
 };
 
-export function calculateEquivalenceIncrease(stats, settings, defenses, increasePercent) {
+export function calculateEquivalenceIncrease(stats, settings, defenses, increasePercent, mode) {
   // work the damage formula backwards to solve for each stat with the other provided stats and the increasePercent
   // due to the large amount of variables, the equations are very long so each stat gets abbreviated to reduce the size of the assignments
   const a = stats.strength[0];
@@ -77,10 +77,15 @@ export function calculateEquivalenceIncrease(stats, settings, defenses, increase
   const l = settings.sF;
   const m = settings.minWeight;
   const n = settings.bossWeight;
-
-  const o = defenses.boss.flat;
-  const p = defenses.boss.multiplier;
-  const q = defenses.boss.mitigation;
+  
+  let o = defenses.boss.flat;
+  let p = defenses.boss.multiplier;
+  let q = defenses.boss.mitigation;
+  if (mode === "Normal"){
+    o = defenses.normal.flat;
+    p = defenses.normal.multiplier;
+    q = defenses.normal.mitigation;
+  }
 
   const r = increasePercent;
 
@@ -109,6 +114,26 @@ export function calculateEquivalenceIncrease(stats, settings, defenses, increase
   } else {
     equivalence.bossAdded = [r*(p*k*b+l*(a*p+c+e-o))/(l*n*ep), r*(p*k*b+l*(a*p+c+e-o))/(l*n*e/ep)*100];
     equivalence.bossAmp = [r*100*(1+j/100)/(n), 'N/A'];
+  }
+
+  return equivalence;
+};
+
+export function calculateAverageEquivalence(stats, settings, defenses, increasePercent) {
+  const equivalenceNormal = calculateEquivalenceIncrease(stats, settings, defenses, increasePercent, "Normal");
+  const equivalenceBoss = calculateEquivalenceIncrease(stats, settings, defenses, increasePercent, "Boss");
+
+  const statNames = ['strength', 'attack', 'static', 'normalAdded', 'bossAdded', 'critical', 'minimum', 'maximum', 'normalAmp', 'bossAmp'];
+  let equivalence = {};
+
+  for (let st in statNames) {
+    equivalence[statNames[st]] = [];
+    equivalence[statNames[st]][0] = equivalenceBoss[statNames[st]][0] * settings.bossWeight + equivalenceNormal[statNames[st]][0] * (1 - settings.bossWeight);
+    if (statNames[st] !== 'normalAmp' && statNames[st] !== 'bossAmp') {
+      equivalence[statNames[st]][1] = equivalenceBoss[statNames[st]][1] * settings.bossWeight + equivalenceNormal[statNames[st]][1] * (1 - settings.bossWeight);
+    } else {
+      equivalence[statNames[st]][1] = 'N/A';
+    }
   }
 
   return equivalence;

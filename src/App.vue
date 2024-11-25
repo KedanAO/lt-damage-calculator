@@ -1,5 +1,5 @@
 <script>
-import { applyChanges, calculateDamage, compareDamage, getAverageDamage, calculateEquivalenceIncrease } from './utils/ltdc.js'
+import { applyChanges, calculateDamage, compareDamage, getAverageDamage, calculateAverageEquivalence } from './utils/ltdc.js'
 import buffs from './utils/buffs.js'
 import { defaultStats, defaultStatsA, defaultStatsB, defaultSettings, defaultSelectedBuffs } from './utils/defaults.js'
 
@@ -11,6 +11,8 @@ import { defaultStats, defaultStatsA, defaultStatsB, defaultSettings, defaultSel
 // -- what else?
 // - adjust equivalence table to consider both normal and boss dmg?
 // - edit README.md
+// - add strength/magic efficiency (after 8k)
+// - adjust summon formula (after 8.5k)
 
 
 export default {
@@ -183,7 +185,7 @@ export default {
     calculateDamage,
     compareDamage,
     getAverageDamage,
-    calculateEquivalenceIncrease,
+    calculateAverageEquivalence,
 
     // formatting values that are displayed
     formatDamage(damage) {
@@ -302,7 +304,7 @@ export default {
       const increaseBossB = compareDamage(damageBoss, damageBossB)
       const increaseAvgB = getAverageDamage(increaseNormalB, increaseBossB, this.settings.bossWeight)
 
-      console.log(increaseAvgA)
+      // console.log(increaseAvgA)
 
       inc.normal[0] = this.formatIncrease(increaseNormalA)
       inc.boss[0] = this.formatIncrease(increaseBossA)
@@ -453,9 +455,9 @@ export default {
 
     getEquivalence(incPerc) {
       const buffedStats = applyChanges(this.stats, this.getBuffStats())
-      const equivalence = calculateEquivalenceIncrease(buffedStats, this.settings, this.defenses, incPerc / 100)
+      const equivalence = calculateAverageEquivalence(buffedStats, this.settings, this.defenses, incPerc / 100)
 
-      return equivalence
+      return equivalence;
     },
 
     updateEquivalences() {
@@ -500,19 +502,7 @@ export default {
           'mitigation': 0
         }
       }
-      if (this.settings.target === 'durable') {
-        newDef.normal.multiplier = 0.6017
-        newDef.normal.multiplierB = 0.6225
-        newDef.normal.flat = 500000
-        newDef.normal.mitigation = 0.8
-
-        newDef.boss.multiplier = 0.6017
-        newDef.boss.multiplierB = 0.6225
-        newDef.boss.flat = 500000
-        newDef.boss.mitigation = 0.8
-      } 
-      // wip 7k mobs
-      else if (this.settings.target === '7k') {
+      if (this.settings.target === '7k') {
         newDef.normal.multiplier = 0.402
         newDef.normal.multiplierB = 0.413
         newDef.normal.flat = 500000
@@ -872,9 +862,7 @@ export default {
         <br>
         - <strong>Soft Dummy</strong>: The soft dummy in the fight arena. Has zero defense in every aspect. Formula is more accurate for this one.
         <br>
-        - <strong>Durable Dummy</strong>: The durable dummies in the fight arena. Has a small amount of defenses, but large mitigation. Will be changed in 7k update.
-        <br>
-        - <strong>7k Mobs</strong>: [WIP] Mobs found within the 7000 dungeon in normal mode. These mobs will have defense scaling, damage mitigation and a moderate amount of flat defense, the boss having a greater amount of all of those.
+        - <strong>7k Mobs</strong>: Mobs found within the 7000 dungeon in normal mode. These mobs will have defense scaling, damage mitigation and a moderate amount of flat defense, the boss having a greater amount of all of those.
         <br><br>
         For more information about how the calculator considers defense, read the damage formula below.
       </div>
@@ -1028,7 +1016,6 @@ export default {
         <span>
           <select v-model="settings['target']" @change="updateDefenses">
             <option value="soft">Soft Dummy</option>
-            <option value="durable">Durable Dummies</option>
             <option value="7k">7k Mobs</option>
           </select>
         </span>
