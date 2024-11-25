@@ -864,6 +864,8 @@ export default {
         <br>
         - <strong>7k Mobs</strong>: Mobs found within the 7000 dungeon in normal mode. These mobs will have defense scaling, damage mitigation and a moderate amount of flat defense, the boss having a greater amount of all of those.
         <br><br>
+        Currently, the durable dummies inside of the Training Room instance dungeon have the same defense stats as the 7k dungeon mobs, so those can be used for fairly accurate testing.
+        <br>
         For more information about how the calculator considers defense, read the damage formula below.
       </div>
       <h3>Buffs <span @click="toggleInfoSection('buffs')" class="hide-section">{{ infoSections['buffs'] ? '[hide]' : '[show]' }}</span></h3>
@@ -942,7 +944,7 @@ export default {
         and can behave in odd manners, but for an approximate understanding of how defense affects your damage, there are three variables to be aware of:
         <br>
         - <strong>Defense Scaling</strong>: This value directly affects your Attack and Strength and acts as a multiplier, with a value between 0% and 100%, reducing those stats. 
-        Static Damage and Added Damage ignore this value and are not reduced.
+        Static Damage and Added Damage are also affected, albeit at a very slightly lesser amount.
         <br>
         - <strong>Flat Defense</strong>: This is a flat value that is subtracted from your base after adding your other base stats and scales with Strength Factor, thus more strongly affects your summon skills.
         <br>
@@ -964,9 +966,11 @@ export default {
       <div v-if="infoSections['other']">
         <h4>Defense Penetration</h4>
         The way defense penetration works within the damage formula is rather obscure and not yet completely understood. It has no effects on enemies that have no defense
-        (Soft Dummy), but might display large effects even when enemies have small amounts of defense. When passing 95 penetration, we can generally assume each additional point
-        will be roughly 1% more damage over the previous point. There are slight exceptions - in testing against enemies with high amounts of defense this value might increase
-        slightly, but generally won't pass 1.5%. That said, within the calculator, we will always consider 99 penetration when checking for damage against targets with defense.
+        (Soft Dummy), but might display large effects even when enemies have small amounts of defense. Additionally, it functions differently with summon skills, often times 
+        not changing the damage at all. When passing 95 penetration, we can generally assume each additional point will be roughly 1% more damage over the previous point.
+        There are slight exceptions - in testing against enemies with high amounts of defense this value might increase slightly, but generally won't pass 1.3%. That said, 
+        within the calculator, we will always consider 98 penetration when checking for damage against targets with defense, as that is the recommended value to aim for at
+        endgame.
         <h4>Back Attack Damage</h4>
         Back attack damage only applies when hitting the back side of enemies, which makes it very difficult to utilize in normal situations, only being very effective for classes
         with high mobility and stuns, or in party play scenarios. Currently, it is not available within the calculator, however, if you are curious as to how back attack damage is
