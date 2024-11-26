@@ -953,7 +953,7 @@ export default {
         With those variables in mind, the damage formula when accounting for defense would be:
         <br><br>
         <!-- base, multipliers, damage full formulas -->
-        <img src="./assets/formula_base_full.png" alt="">
+        <img src="./assets/formula_base_full_2.png" alt="">
         <br><br>
         <img src="./assets/formula_multipliers_weighted.png" alt="">
         <br><br>
