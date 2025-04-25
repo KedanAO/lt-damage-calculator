@@ -1,14 +1,14 @@
 export const defaultStats = {
-  'strength': [3321579, 436],
-  'attack': [33863, 396],
-  'critical': [5332, 126],
-  'minimum': [3293, 124],
-  'maximum': [5310, 120],
-  'static': [798324, 212],
-  'normalAdded': [256147, 100],
-  'bossAdded': [657511, 115],
-  'normalAmp': [53.0, 100],
-  'bossAmp': [51.7, 100]
+  'strength': [4015032, 473],
+  'attack': [40240, 418],
+  'critical': [6331, 130],
+  'minimum': [3854, 122],
+  'maximum': [6001, 122],
+  'static': [828656, 203],
+  'normalAdded': [580862, 113],
+  'bossAdded': [809453, 125],
+  'normalAmp': [61.1, 100],
+  'bossAmp': [58.1, 100]
 }
 
 export const defaultStatsA = {
@@ -38,9 +38,9 @@ export const defaultStatsB = {
 }
 
 export const defaultSettings = {
-  'aF': 150,
+  'aF': 170,
   'sF': 120,
-  'fF': 140,
+  'fF': 130,
   'minWeight': 0.3,
   'bossWeight': 0.5,
   'target': 'soft'
@@ -60,7 +60,7 @@ export const defaultSelectedBuffs = {
     'Food': 'Chicken Soup',
     'Relic': 'Nightmare +4',
     'Guild Relic': '+9',
-    'Summonable': 'Awakened Beatrice',
+    'Summonable': 'Awakened Lustral',
   },
   'Midterm': {
     'single': {
@@ -69,15 +69,15 @@ export const defaultSelectedBuffs = {
       'Sweet Mutant Critical': true,
       'Sweet Mutant Maximum': true,
       'Guild Banana/Juice': true,
-      'Alvis Helper Potion': false,
+      'Fatal Perfume': true,
     },
     'Rep Food': 'Reputation Abalone Champon',
     'Syrup': 'Advanced Premium Syrup',
     'Booster': 'Union Critical Booster',
+    'Alvis Helper Potion': 'Critical',
   },
   'Maxed': {
     'single': {
-      'Fatal Perfume': false,
       'Long Eastland Ice Tea': false,
       'Fisherman Blessing': false,
       'Strength/Magic Holy Water': false,
@@ -99,6 +99,8 @@ export const defaultSelectedBuffs = {
       'Potent Barbeque': false,
       'Valentine Chocolate': false,
       'Ham and Egg Toast': false,
+      'Ice Water': false,
+      'Honey Cookie': false,
     },
   },
   'Party': {
@@ -118,6 +120,7 @@ export const defaultSelectedBuffs = {
       "Dark Dragon's Power": false,
       "Master Hero's Mark": false,
       'Skillbook of Patronage': false,
+      'GM Superpower': false,
     }
   }
 }

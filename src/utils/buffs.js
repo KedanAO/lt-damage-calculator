@@ -65,7 +65,7 @@ const buffs = {
       'Sweet Mutant Critical': {'critical':[40,0]},
       'Sweet Mutant Maximum': {'maximum':[40,0]},
       'Guild Banana/Juice': {'critical':[30,0]},
-      'Alvis Helper Potion': {'strength':[0,3]},
+      'Fatal Perfume': {'critical':[30,0]},
     },
     'Rep Food': {
       'Reputation Abalone Champon': {'attack':[0,5]},
@@ -79,10 +79,15 @@ const buffs = {
       'Union Critical Booster': {'critical':[120,0]},
       'Union Damage Booster': {'minimum':[70,0], 'maximum':[70,0]},
     },
+    'Alvis Helper Potion': {
+      'Basic Stats %': {'strength':[0,3]},
+      'Minimum': {'minimum':[20,0]},
+      'Maximum': {'maximum':[20,0]},
+      'Critical': {'critical':[20,0]},
+    }
   },
   'Maxed': {
     'single': {
-      'Fatal Perfume': {'critical':[30,0]},
       'Long Eastland Ice Tea': {'attack':[30,0], 'critical':[20,0]},
       'Fisherman Blessing': {'critical':[50,0]},
       'Strength/Magic Holy Water': {'strength':[0,10]},
@@ -101,9 +106,10 @@ const buffs = {
       'Special Helper Potion': {'strength':[0,2]},
       'Summer Festival Utility Potion': {'strength':[0,10]},
       'Space Food': {'attack':[0,5]},
-      'Potent Barbeque': {'strength':[0,3],'critical':[30,0]},
       'Valentine Chocolate': {'strength':[0,10]},
-      'Ham and Egg Toast': {'critical':[20,0],'attack':[0,5]}
+      'Ham and Egg Toast': {'critical':[20,0],'attack':[0,5]},
+      'Ice Water': {'critical':[50,0]},
+      'Honey Cookie': {'maximum':[50,0],'attack':[0,5]}
     },
     'Bungbung': {
       'Eastland Bungbung Drink': {'attack':[50,0]},
@@ -120,6 +126,13 @@ const buffs = {
       'Critical': {'critical':[30,0]},
       'Attack/Intensity': {'attack':[0,5]},
     },
+    'Sunburst Soul Potion': {
+      'Attack %': {'attack':[0,10]},
+      'Critical': {'critical':[50,0]},
+      'Dual Damage': {'minimum':[200,0],'maximum':[200,0]},
+      'Static':{'static':[20000,0]},
+      'Potent Barbeque': {'strength':[0,3],'critical':[30,0]},
+    },
   },
   'Party': {
     'single': {
@@ -135,13 +148,14 @@ const buffs = {
     },
     'single': {
       'Guild Blessing': {'maximum':[10,0], 'critical':[10,0]},
-      'Quiz Master': {'critical':[5,0], 'maximum':[5,0]},
+      'Quiz Master': {'critical':[30,0], 'maximum':[30,0]},
       "Hunter's Power": {'strength':[0,2], 'maximum':[10,0], 'critical':[10,0]},
       'Shadow Effect': {'attack':[30,0]},
       "Attacker's Skill": {'attack':[30,5]},
       "Dark Dragon's Power": {'strength':[10000,0], 'critical':[50,0], 'maximum':[50,0]},
       "Master Hero's Mark": {'strength':[0,3]},
-      'Skillbook of Patronage': {'strength':[0,5], 'critical':[15,0]}
+      'Skillbook of Patronage': {'strength':[0,5], 'critical':[15,0]},
+      'GM Superpower': {'critical':[10,0]},
     }
   }
 }

@@ -988,7 +988,7 @@ export default {
       <div class='button-spread'>
         <button @click="setSkillFactor(240, 100, 100)">Direct</button>
         <button @click="setSkillFactor(400, 100, 100)">Direct High</button>
-        <button @click="setSkillFactor(150, 120, 140)">Hybrid</button>
+        <button @click="setSkillFactor(170, 120, 130)">Hybrid</button>
         <button @click="setSkillFactor(45, 140, 190)">Summon</button>
       </div>
       <li class="input-container">
