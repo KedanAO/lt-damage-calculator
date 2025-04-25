@@ -25,13 +25,11 @@ export default {
       defenses: {
         'normal': {
           'multiplier': 1,
-          'multiplierB': 1,
           'flat': 0,
           'mitigation': 0
         },
         'boss': {
           'multiplier': 1,
-          'multiplierB': 1,
           'flat': 0,
           'mitigation': 0
         }
@@ -491,45 +489,40 @@ export default {
       let newDef = {
         'normal': {
           'multiplier': 1,
-          'multiplierB': 1,
           'flat': 0,
           'mitigation': 0
         },
         'boss': {
           'multiplier': 1,
-          'multiplierB': 1,
           'flat': 0,
           'mitigation': 0
         }
       }
       if (this.settings.target === '7k') {
         newDef.normal.multiplier = 0.402
-        newDef.normal.multiplierB = 0.413
         newDef.normal.flat = 500000
         newDef.normal.mitigation = 0.53
 
         newDef.boss.multiplier = 0.31
-        newDef.boss.multiplierB = 0.32
         newDef.boss.flat = 1000000
         newDef.boss.mitigation = 0.75
       }
 
       this.defenses.normal.multiplier = newDef.normal.multiplier
-      this.defenses.normal.multiplierB = newDef.normal.multiplierB
       this.defenses.normal.flat = newDef.normal.flat
       this.defenses.normal.mitigation = newDef.normal.mitigation
 
       this.defenses.boss.multiplier = newDef.boss.multiplier
-      this.defenses.boss.multiplierB = newDef.boss.multiplierB
       this.defenses.boss.flat = newDef.boss.flat
       this.defenses.boss.mitigation = newDef.boss.mitigation
 
       this.updateAll()
     },
 
-    setSkillFactor(aF, sF) {
+    setSkillFactor(aF, sF, fF) {
       this.settings.aF = aF
       this.settings.sF = sF
+      this.settings.fF = fF
     },
 
     clearStats(block) {
@@ -839,8 +832,8 @@ export default {
       <h3>Additional Parameters <span @click="toggleInfoSection('parameters')" class="hide-section">{{ infoSections['parameters'] ? '[hide]' : '[show]' }}</span></h3>
       <div v-if="infoSections['parameters']">
         This window allows you to customize the more technical details of the damage calculation process, typically hidden to players.
-        <h4>Strength & Attack Factors</h4>
-        While every skill within LaTale follows the same damage formula, their damage is differentiated by those two factor values which are different for every skill.
+        <h4>Factors</h4>
+        While every skill within LaTale follows the same damage formula, their damage is differentiated by those three factor values which are different for every skill.
         The buttons allow you to switch between specific presets, or you can manually edit those if you know your specific skill or specific class recommended factors. 
         For more information on how both of those factors behave, read the damage formula below.
         <h4>Minimum Weight</h4>
@@ -915,16 +908,16 @@ export default {
         explanation), Strength/Magic (similarly, referred to as Strength), Static Damage and Normal/Boss Added Damage (referred to as simply Added Damage), and the multipliers,
         consisting of stats that multiply the base and themselves, those being Critical Damage, Minimum/Maximum Damage and Normal/Boss Amplification.
         <br><br>
-        Most of those values are obtained from our visible stats in-game, except for two: <em>Attack Factor</em> and <em>Strength Factor</em>.
-        Those two values are skill-scaling factors which are different for every skill within the game, but there are a few standard rules:
+        Most of those values are obtained from our visible stats in-game, except for three: <em>Strength Factor</em>, <em>Attack Factor</em>, and <em>Final Factor</em>.
+        Those three values are skill-scaling factors which are different for every skill within the game, but there are a few standard rules:
         <br>
-        - For both of those values and when applicable, increasing skill levels will increase their value by a fixed amount.
+        - For summon damage, Strength Factor is the % displayed in the skill's details, scaling with levels, and the Attack Factor is a fixed hidden value.
         <br>
-        - Attack Factor is present in every skill, typically being higher for direct damage skills and it affects how each skill scales with Attack.
+        - For direct damage, Strength Factor is equivalent to your Strength/Magic Ratio hidden stat, and the Attack Factor is approximately the skill multiplier displayed in the skill's details divided by 50, scaling with levels.
         <br>
-        - Strength Factor is present only in summon skills, affecting how those skills scale with Strength, Static Damage and Added Damage. It is fixed at 1 for other skills.
+        - Final Factor is a hidden value present in summon damage that multiplies the final damage by a further amount, scaling with levels. It is fixed at 1 for direct damage.
         <br>
-        - Bleed (Additional Damage) scale with the Attack Factor but do not scale with skill levels, except on buffs that have levels such as Demigod's Seres' Grace.
+        - Bleed (Additional Damage) functions similarly to direct damage, except Attack Factor will most often not scale with skill levels, although there are a few exceptions.
         <br>
         For more information on factors, the values of the factors for each class' skills and recommended factors to use within the calculator for each class, please see: <a href="https://docs.google.com/spreadsheets/d/1bG7M5-Te25STBjsiYi0H1dzmLalvaVViuLaxzCHNXTM/edit?usp=sharing">[LaTale] Factor Data</a>
       </div>
@@ -960,7 +953,15 @@ export default {
         <img src="./assets/formula_damage_full.png" alt="">
         <br><br>
         Note that we don't have direct access to how those values change from mob to mob and are collected from testing in-game, so when using this calculator
-        to calculate damage versus mobs with defense, please understand that the values are but approximations and might differ from a real scenario. 
+        to calculate damage versus mobs with defense, please understand that the values are but approximations and might differ from a real scenario.
+        <br><br>
+        Currently, when selecting 7k Mobs as a target, the calculator will utilize the following values for Normal and Boss targets respectively:
+        <br>
+        - <strong>Defense Scaling</strong>: 0.402 and 0.31
+        <br>
+        - <strong>Flat Defense</strong>: 500,000 and 1,000,000 
+        <br>
+        - <strong>Damage Mitigation</strong>: 53% and 75%
       </div>
       <h3>Other Stats <span @click="toggleInfoSection('other')" class="hide-section">{{ infoSections['other'] ? '[hide]' : '[show]' }}</span></h3>
       <div v-if="infoSections['other']">
@@ -974,13 +975,8 @@ export default {
         <h4>Back Attack Damage</h4>
         Back attack damage only applies when hitting the back side of enemies, which makes it very difficult to utilize in normal situations, only being very effective for classes
         with high mobility and stuns, or in party play scenarios. Currently, it is not available within the calculator, however, if you are curious as to how back attack damage is
-        applied, Korean players have done some research and come with a conclusion regarding back attack damage, where it'd function as follows:
-        <br><br><img src="./assets/formula_damage_back.png" alt="">
-        <br><br><img src="./assets/formula_back_attack.png" alt="">
-        <br>Where Mod = 1.01 for physical attacks, Mod = 1.013 for magical attacks
-        <br>The value is rounded down after the third decimal
-        <br><br>
-        You can read more in <a href="https://cafe.naver.com/ArticleRead.nhn?clubid=25910938&page=1&menuid=185&boardtype=L&articleid=270470&referrerAllArticles=false">this link</a> (in Korean).
+        applied, Korean players have done some research and come to the conclusion that Back Attack is added to Critical Damage, but ignores part of the bosses' additional damage 
+        mitigation when changing phases. You can read more at <a href="https://cafe.naver.com/f-e/cafes/25910938/articles/270770?boardtype=L&menuid=185&referrerAllArticles=false">this link</a> (in Korean).
       </div>
     </div>
   </div>
@@ -990,19 +986,24 @@ export default {
     <div class="stat-block">
       <h2 class="damage-block">Additional Parameters</h2>
       <div class='button-spread'>
-        <button @click="setSkillFactor(240, 1)">Direct</button>
-        <button @click="setSkillFactor(400, 1)">Direct High</button>
-        <button @click="setSkillFactor(150, 1.5)">Hybrid</button>
-        <button @click="setSkillFactor(80, 1.8)">Summon</button>
+        <button @click="setSkillFactor(240, 100, 100)">Direct</button>
+        <button @click="setSkillFactor(400, 100, 100)">Direct High</button>
+        <button @click="setSkillFactor(150, 120, 140)">Hybrid</button>
+        <button @click="setSkillFactor(45, 140, 190)">Summon</button>
       </div>
       <li class="input-container">
-        <span class="input-text">Strength Factor</span>
+        <span class="input-text">Strength Factor (%)</span>
         <span><input type="text" inputmode="numeric" class="input-full" v-model.number="settings['sF']"></span>
         <span class="input-perc"></span>
       </li>
       <li class="input-container">
         <span class="input-text">Attack Factor</span>
         <span><input type="text" inputmode="numeric" class="input-full" v-model.number="settings['aF']"></span>
+        <span class="input-perc"></span>
+      </li>
+      <li class="input-container">
+        <span class="input-text">Final Factor (%)</span>
+        <span><input type="text" inputmode="numeric" class="input-full" v-model.number="settings['fF']"></span>
         <span class="input-perc"></span>
       </li>
       <li class="input-container">

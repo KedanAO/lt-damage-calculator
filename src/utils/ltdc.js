@@ -23,11 +23,11 @@ export function applyChanges(stats, changes){
 export function calculateDamage(stats, settings, defenses, enemyType) {
   // base
   const attack = stats.attack[0] * settings.aF * defenses[enemyType].multiplier;
-  const strength = stats.strength[0] * defenses[enemyType].multiplier;
-  const staticDamage = stats.static[0] * defenses[enemyType].multiplierB;
-  const added = stats[enemyType + 'Added'][0] * defenses[enemyType].multiplierB;
+  const strength = stats.strength[0] * (settings.sF / 100) * defenses[enemyType].multiplier;
+  const staticDamage = stats.static[0] * defenses[enemyType].multiplier;
+  const added = stats[enemyType + 'Added'][0] * defenses[enemyType].multiplier;
 
-  const base = attack + (strength + staticDamage + added - defenses[enemyType].flat) * settings.sF
+  const base = attack + (strength + staticDamage + added - defenses[enemyType].flat);
 
   // multipliers
   const critical = (stats.critical[0] + 100) / 100;
@@ -37,7 +37,7 @@ export function calculateDamage(stats, settings, defenses, enemyType) {
 
   const multiplier = critical * minmax * amp;
 
-  const resultingDamage = base * multiplier * (1 - defenses[enemyType].mitigation);
+  const resultingDamage = base * multiplier * (settings.fF / 100) * (1 - defenses[enemyType].mitigation);
 
   return resultingDamage;
 };
