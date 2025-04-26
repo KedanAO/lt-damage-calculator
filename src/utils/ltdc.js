@@ -32,7 +32,7 @@ export function calculateDamage(stats, settings, defenses, enemyType) {
   // multipliers
   const critical = (stats.critical[0] + 100) / 100;
   const min = stats.minimum[0] <= stats.maximum[0] ? stats.minimum[0] : stats.maximum[0]
-  const minmax = (min * settings.minWeight + stats.maximum[0] * (1 - settings.minWeight) + 120) / 100;
+  const minmax = (min * settings.minWeight + stats.maximum[0] * (1 - settings.minWeight) + 100) / 100;
   const amp = 1 + stats[enemyType + 'Amp'][0] / 100;
 
   const multiplier = critical * minmax * amp;
@@ -50,90 +50,85 @@ export function getAverageDamage(normalDamage, bossDamage, weight) {
   return normalDamage * (1-weight) + bossDamage * weight;
 };
 
-export function calculateEquivalenceIncrease(stats, settings, defenses, increasePercent, mode) {
+export function calculateEquivalenceIncrease(stats, settings, defenses, increasePercent) {
+  // use the damage formulas to solve for this equation:
+  // (newDamageNormal - oldDamageNormal) / oldDamageNormal * (1-bossWeight) + (newDamageBoss - oldDamageBoss) / oldDamageBoss * bossWeight = increasePercent
+  // newDamage = stat to be increased's multipliers * increase + old damage, solve for increase
   // work the damage formula backwards to solve for each stat with the other provided stats and the increasePercent
-  // due to the large amount of variables, the equations are very long so each stat gets abbreviated to reduce the size of the assignments
-  const a = stats.strength[0];
-  const b = stats.attack[0];
-  const c = stats.static[0];
-  const d = stats.normalAdded[0];
-  const e = stats.bossAdded[0];
-  const f = stats.critical[0];
-  const g = stats.minimum[0] <= stats.maximum[0] ? stats.minimum[0] : stats.maximum[0];
-  const h = stats.maximum[0];
-  const i = stats.normalAmp[0];
-  const j = stats.bossAmp[0];
+  // due to the large amount of variables, the equations are very long so some auxiliary variables are used
+  const strP = stats.strength[1]/100;
+  const atkP = stats.attack[1]/100;
+  const statP = stats.static[1]/100;
+  const nAddP = stats.normalAdded[1]/100;
+  const bAddP = stats.bossAdded[1]/100;
+  const critP = stats.critical[1]/100;
+  const minP = stats.minimum[1]/100;
+  const maxP = stats.maximum[1]/100;
 
-  const ap = stats.strength[1]/100;
-  const bp = stats.attack[1]/100;
-  const cp = stats.static[1]/100;
-  const dp = stats.normalAdded[1]/100;
-  const ep = stats.bossAdded[1]/100;
-  const fp = stats.critical[1]/100;
-  const gp = stats.minimum[1]/100;
-  const hp = stats.maximum[1]/100;
+  const str = stats.strength[0] / strP;
+  const atk = stats.attack[0] / atkP;
+  const stat = stats.static[0] / statP;
+  const nAdd = stats.normalAdded[0] / nAddP;
+  const bAdd = stats.bossAdded[0] / bAddP;
+  const crit = stats.critical[0] / critP;
+  const min = stats.minimum[0] <= stats.maximum[0] ? stats.minimum[0] / minP : stats.maximum[0] / maxP;
+  const max = stats.maximum[0] / maxP;
+  const nAmp = stats.normalAmp[0];
+  const bAmp = stats.bossAmp[0];
 
-  const k = settings.aF;
-  const l = settings.sF;
-  const m = settings.minWeight;
-  const n = settings.bossWeight;
+  const sF = settings.sF / 100;
+  const aF = settings.aF;
+  const tF = settings.fF / 100;
+  const minW = settings.minWeight;
+  const bossW = settings.bossWeight;
   
-  let o = defenses.boss.flat;
-  let p = defenses.boss.multiplier;
-  let q = defenses.boss.mitigation;
-  if (mode === "Normal"){
-    o = defenses.normal.flat;
-    p = defenses.normal.multiplier;
-    q = defenses.normal.mitigation;
-  }
+  const nDefFlat = defenses.normal.flat;
+  const nDefMult = defenses.normal.multiplier;
+  const nDefMit = 1 - defenses.normal.mitigation;
+  const bDefFlat = defenses.boss.flat;
+  const bDefMult = defenses.boss.multiplier;
+  const bDefMit = 1 - defenses.boss.mitigation;
 
   const r = increasePercent;
 
+  const nDmg = calculateDamage(stats, settings, defenses, "normal")
+  const bDmg = calculateDamage(stats, settings, defenses, "boss")
+
+  const critCalc = (crit*critP/100+1)
+  const minMaxCalc = (min*minP*minW/100+max*maxP*(1-minW)/100+1)
+  const nAmpCalc = (nAmp/100+1)
+  const bAmpCalc = (bAmp/100+1)
+
+  const nBase = ((str*strP*sF+atk*atkP*aF+stat*statP+nAdd*nAddP)*nDefMult-nDefFlat)*nDefMit*tF
+  const bBase = ((str*strP*sF+atk*atkP*aF+stat*statP+bAdd*bAddP)*bDefMult-bDefFlat)*bDefMit*tF
+  const nMultis = nDefMult*critCalc*minMaxCalc*nAmpCalc*nDefMit*tF
+  const bMultis = bDefMult*critCalc*minMaxCalc*bAmpCalc*bDefMit*tF
+
   let equivalence = {};
 
-  equivalence.strength = [r*(p*k*b+l*(a*p+c+d*(1-n)+e*n-o))/(l*p*ap), r*(p*k*b+l*(a*p+c+d*(1-n)+e*n-o))/(l*p*a/ap)*100];
-  equivalence.attack = [r*(p*k*b+l*(p*a+c+d*(1-n)+e*n-o))/(p*k*bp), r*(p*k*b+l*(p*a+c+d*(1-n)+e*n-o))/(p*k*b/bp)*100];
-  equivalence.static = [r*(p*k*b+l*(a*p+c+d*(1-n)+e*n-o))/(l*cp), r*(p*k*b+l*(a*p+c+d*(1-n)+e*n-o))/(l*c/cp)*100];
-  equivalence.critical = [r*(f+100)/(fp), r*(f+100)/(f/fp)*100];
+  equivalence.strength = [r/(sF*strP*nMultis/nDmg*(1-bossW)+sF*strP*bMultis/bDmg*bossW), r/(sF*str*nMultis/nDmg*(1-bossW)+sF*str*bMultis/bDmg*bossW) * 100];
+  equivalence.attack = [r/(aF*atkP*nMultis/nDmg*(1-bossW)+aF*atkP*bMultis/bDmg*bossW), r/(aF*atk*nMultis/nDmg*(1-bossW)+aF*atk*bMultis/bDmg*bossW) * 100];
+  equivalence.static = [r/(statP*nMultis/nDmg*(1-bossW)+statP*bMultis/bDmg*bossW), r/(stat*nMultis/nDmg*(1-bossW)+stat*bMultis/bDmg*bossW) * 100];
+  equivalence.critical = [r/(nBase*(critP/100)*minMaxCalc*nAmpCalc/nDmg), r/(nBase*(crit/100)*minMaxCalc*nAmpCalc/nDmg) * 100];
   if (settings.minWeight <= 0) {
     equivalence.minimum = ['-', '-'];
   } else {
-    equivalence.minimum = [r*(2*g*m+2*h*(1-m)+240)/(2*m*gp), r*(2*g*m+2*h*(1-m)+240)/(2*m*g/gp)*100];
+    equivalence.minimum = [r/(nBase*critCalc*(minP*minW/100)*nAmpCalc/nDmg), r/(nBase*critCalc*(min*minW/100)*nAmpCalc/nDmg) * 100];
   };
-  equivalence.maximum = [r*(2*g*m+2*h*(1-m)+240)/(2*(1-m)*hp), r*(2*g*m+2*h*(1-m)+240)/(2*(1-m)*h/hp)*100];
+  equivalence.maximum = [r/(nBase*critCalc*(maxP*(1-minW)/100)*nAmpCalc/nDmg), r/(nBase*critCalc*(max*(1-minW)/100)*nAmpCalc/nDmg) * 100];
   if (settings.bossWeight >= 1) {
     equivalence.normalAdded = ['-', '-'];
     equivalence.normalAmp = ['-', '-'];
   } else {
-    equivalence.normalAdded = [r*(p*k*b+l*(a*p+c+d-o))/(l*(1-n)*dp), r*(p*k*b+l*(a*p+c+d-o))/(l*(1-n)*d/dp)*100];
-    equivalence.normalAmp = [r*100*(1+i/100)/(1-n), 'N/A'];
+    equivalence.normalAdded = [r/(nAddP*nMultis/nDmg*(1-bossW)), r/(nAdd*nMultis/nDmg*(1-bossW)) * 100];
+    equivalence.normalAmp = [r/(nBase*critCalc*minMaxCalc/nDmg)*100*2, 'N/A'];
   }
   if (settings.bossWeight <= 0) {
     equivalence.bossAdded = ['-', '-'];
     equivalence.bossAmp = ['-', '-'];
   } else {
-    equivalence.bossAdded = [r*(p*k*b+l*(a*p+c+e-o))/(l*n*ep), r*(p*k*b+l*(a*p+c+e-o))/(l*n*e/ep)*100];
-    equivalence.bossAmp = [r*100*(1+j/100)/(n), 'N/A'];
-  }
-
-  return equivalence;
-};
-
-export function calculateAverageEquivalence(stats, settings, defenses, increasePercent) {
-  const equivalenceNormal = calculateEquivalenceIncrease(stats, settings, defenses, increasePercent, "Normal");
-  const equivalenceBoss = calculateEquivalenceIncrease(stats, settings, defenses, increasePercent, "Boss");
-
-  const statNames = ['strength', 'attack', 'static', 'normalAdded', 'bossAdded', 'critical', 'minimum', 'maximum', 'normalAmp', 'bossAmp'];
-  let equivalence = {};
-
-  for (let st in statNames) {
-    equivalence[statNames[st]] = [];
-    equivalence[statNames[st]][0] = equivalenceBoss[statNames[st]][0] * settings.bossWeight + equivalenceNormal[statNames[st]][0] * (1 - settings.bossWeight);
-    if (statNames[st] !== 'normalAmp' && statNames[st] !== 'bossAmp') {
-      equivalence[statNames[st]][1] = equivalenceBoss[statNames[st]][1] * settings.bossWeight + equivalenceNormal[statNames[st]][1] * (1 - settings.bossWeight);
-    } else {
-      equivalence[statNames[st]][1] = 'N/A';
-    }
+    equivalence.bossAdded = [r/(bAddP*bMultis/bDmg*bossW), r/(bAdd*bMultis/bDmg*bossW) * 100];
+    equivalence.bossAmp = [r/(bBase*critCalc*minMaxCalc/bDmg)*100*2, 'N/A']
   }
 
   return equivalence;

@@ -1,5 +1,5 @@
 <script>
-import { applyChanges, calculateDamage, compareDamage, getAverageDamage, calculateAverageEquivalence } from './utils/ltdc.js'
+import { applyChanges, calculateDamage, compareDamage, getAverageDamage, calculateEquivalenceIncrease } from './utils/ltdc.js'
 import buffs from './utils/buffs.js'
 import { defaultStats, defaultStatsA, defaultStatsB, defaultSettings, defaultSelectedBuffs } from './utils/defaults.js'
 
@@ -183,7 +183,7 @@ export default {
     calculateDamage,
     compareDamage,
     getAverageDamage,
-    calculateAverageEquivalence,
+    calculateEquivalenceIncrease,
 
     // formatting values that are displayed
     formatDamage(damage) {
@@ -453,7 +453,7 @@ export default {
 
     getEquivalence(incPerc) {
       const buffedStats = applyChanges(this.stats, this.getBuffStats())
-      const equivalence = calculateAverageEquivalence(buffedStats, this.settings, this.defenses, incPerc / 100)
+      const equivalence = calculateEquivalenceIncrease(buffedStats, this.settings, this.defenses, incPerc / 100)
 
       return equivalence;
     },
