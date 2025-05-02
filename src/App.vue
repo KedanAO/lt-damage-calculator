@@ -835,6 +835,12 @@ export default {
         <h4>Factors</h4>
         While every skill within LaTale follows the same damage formula, their damage is differentiated by those three factor values which are different for every skill.
         The buttons allow you to switch between specific presets, or you can manually edit those if you know your specific skill or specific class recommended factors. 
+        <br><br>
+        The Average presets will give you numbers recommended to use for specific classes, weighing all their different skills together for a value that'll help contribute
+        to their overall damage better than enhancing specific skills.
+        <br><br>
+        The Pure presets are the exact numbers used for direct or summon skills, if you want to test for a more specific skill.
+
         For more information on how both of those factors behave, read the damage formula below.
         <h4>Minimum Weight</h4>
         When actually dealing damage in the game, every hit will roll a random value between your Minimum and Maximum damage and utilize that value for that specific hit.
@@ -911,9 +917,9 @@ export default {
         Most of those values are obtained from our visible stats in-game, except for three: <em>Strength Factor</em>, <em>Attack Factor</em>, and <em>Final Factor</em>.
         Those three values are skill-scaling factors which are different for every skill within the game, but there are a few standard rules:
         <br>
-        - For summon damage, Strength Factor is the % displayed in the skill's details, scaling with levels, and the Attack Factor is a fixed hidden value.
+        - For summon damage, Strength Factor is the Total Stats % displayed in the skill's details, scaling with levels, and the Attack Factor is a fixed hidden value.
         <br>
-        - For direct damage, Strength Factor is equivalent to your Strength/Magic Ratio hidden stat, and the Attack Factor is approximately the skill multiplier displayed in the skill's details divided by 50, scaling with levels.
+        - For direct damage, Strength Factor is equivalent to your Strength/Magic Ratio hidden stat, and the Attack Factor is approximately the Skill Multiplier displayed in the skill's details divided by 50, scaling with levels.
         <br>
         - Final Factor is a hidden value present in summon damage that multiplies the final damage by a further amount, scaling with levels. It is fixed at 1 for direct damage.
         <br>
@@ -986,18 +992,22 @@ export default {
     <div class="stat-block">
       <h2 class="damage-block">Additional Parameters</h2>
       <div class='button-spread'>
-        <button @click="setSkillFactor(240, 100, 100)">Direct</button>
-        <button @click="setSkillFactor(400, 100, 100)">Direct High</button>
-        <button @click="setSkillFactor(170, 120, 130)">Hybrid</button>
-        <button @click="setSkillFactor(45, 140, 190)">Summon</button>
+        <button @click="setSkillFactor(6000, 140, 150)">Summon Class Average</button>
+        <button @click="setSkillFactor(2100, 138, 192)">Pure Summon</button>
+
+        <button @click="setSkillFactor(8000, 125, 120)">Direct Class Average</button>
+        <button @click="setSkillFactor(12500, 112, 100)">Pure Direct</button>
+
+        <button @click="setSkillFactor(7250, 130, 135)">Hybrid Class Average</button>
+        <button @click="setSkillFactor(30000, 112, 100)">Pure Direct High</button>
       </div>
       <li class="input-container">
-        <span class="input-text">Strength Factor (%)</span>
+        <span class="input-text">Total Stats %</span>
         <span><input type="text" inputmode="numeric" class="input-full" v-model.number="settings['sF']"></span>
         <span class="input-perc"></span>
       </li>
       <li class="input-container">
-        <span class="input-text">Attack Factor</span>
+        <span class="input-text">Skill Multiplier</span>
         <span><input type="text" inputmode="numeric" class="input-full" v-model.number="settings['aF']"></span>
         <span class="input-perc"></span>
       </li>

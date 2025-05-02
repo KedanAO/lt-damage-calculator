@@ -22,7 +22,7 @@ export function applyChanges(stats, changes){
 
 export function calculateDamage(stats, settings, defenses, enemyType) {
   // base
-  const attack = stats.attack[0] * settings.aF * defenses[enemyType].multiplier;
+  const attack = stats.attack[0] * settings.aF / 50 * defenses[enemyType].multiplier;
   const strength = stats.strength[0] * (settings.sF / 100) * defenses[enemyType].multiplier;
   const staticDamage = stats.static[0] * defenses[enemyType].multiplier;
   const added = stats[enemyType + 'Added'][0] * defenses[enemyType].multiplier;
@@ -77,7 +77,7 @@ export function calculateEquivalenceIncrease(stats, settings, defenses, increase
   const bAmp = stats.bossAmp[0];
 
   const sF = settings.sF / 100;
-  const aF = settings.aF;
+  const aF = settings.aF / 50;
   const tF = settings.fF / 100;
   const minW = settings.minWeight;
   const bossW = settings.bossWeight;
