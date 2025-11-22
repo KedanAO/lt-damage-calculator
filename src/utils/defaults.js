@@ -1,14 +1,18 @@
 export const defaultStats = {
-  'strength': [4015032, 473],
-  'attack': [40240, 418],
-  'critical': [6331, 130],
-  'minimum': [3854, 122],
-  'maximum': [6001, 122],
-  'static': [828656, 203],
-  'normalAdded': [580862, 113],
-  'bossAdded': [809453, 125],
-  'normalAmp': [61.1, 100],
-  'bossAmp': [58.1, 100]
+  'strength': [4944434, 510],
+  'attack': [42275, 438],
+  'critical': [7395, 136],
+  'minimum': [6363, 136],
+  'maximum': [6888, 128],
+  'static': [811391, 204],
+  'normalAdded': [821361, 113],
+  'bossAdded': [920951, 125],
+  'normalAmp': [65.5, 100],
+  'bossAmp': [65.4, 100],
+  'ratio': [17, 100],
+  'back': [569, 100],
+  'melee': [120, 100],
+  'abnormal': [0, 100]
 }
 
 export const defaultStatsA = {
@@ -22,6 +26,10 @@ export const defaultStatsA = {
   'bossAdded': ['', ''],
   'normalAmp': ['', ''],
   'bossAmp': ['', ''],
+  'ratio': ['', ''],
+  'back': ['', ''],
+  'melee': ['', ''],
+  'abnormal': ['', ''],
 }
 
 export const defaultStatsB = {
@@ -35,15 +43,21 @@ export const defaultStatsB = {
   'bossAdded': ['', ''],
   'normalAmp': ['', ''],
   'bossAmp': ['', ''],
+  'ratio': ['', ''],
+  'back': ['', ''],
+  'melee': ['', ''],
+  'abnormal': ['', ''],
 }
 
 export const defaultSettings = {
   'aF': 7250,
   'sF': 130,
   'fF': 135,
-  'minWeight': 0.3,
+  'minWeight': 0.5,
   'bossWeight': 0.5,
-  'target': 'soft'
+  'summonWeight': 0.5,
+  'backWeight': 0.5,
+  'target': '7k'
 }
 
 export const defaultSelectedBuffs = {

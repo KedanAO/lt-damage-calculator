@@ -49,7 +49,11 @@ export default {
         'normalAdded': 'Normal Added Damage',
         'bossAdded': 'Boss Added Damage',
         'normalAmp': 'Normal Amplification',
-        'bossAmp': 'Boss Amplification'
+        'bossAmp': 'Boss Amplification',
+        'ratio': 'Strength/Magic Ratio',
+        'back': 'Back Attack Damage',
+        'melee': 'Melee Damage',
+        'abnormal': 'Abnormal Damage'
       },
       damage: {
         avg: ['---', '---', '---'],
@@ -72,6 +76,10 @@ export default {
         'bossAdded': ['', ''],
         'normalAmp': ['', ''],
         'bossAmp': ['', ''],
+        'ratio': ['', ''],
+        'back': ['', ''],
+        'melee': ['', ''],
+        'abnormal': ['', ''],
       },
       buffedDamage: {
         avg: ['---', '---', '---'],
@@ -94,6 +102,10 @@ export default {
         'bossAdded': ['', ''],
         'normalAmp': ['', ''],
         'bossAmp': ['', ''],
+        'ratio': ['', ''],
+        'back': ['', ''],
+        'melee': ['', ''],
+        'abnormal': ['', ''],
       },
       equivalenceCritical: {
         'strength': ['', ''],
@@ -106,6 +118,10 @@ export default {
         'bossAdded': ['', ''],
         'normalAmp': ['', ''],
         'bossAmp': ['', ''],
+        'ratio': ['', ''],
+        'back': ['', ''],
+        'melee': ['', ''],
+        'abnormal': ['', ''],
       },
       equivalenceValues: {
         'perc': 1,
@@ -338,6 +354,10 @@ export default {
         'bossAdded': [0, 0],
         'normalAmp': [0, 0],
         'bossAmp': [0, 0],
+        'ratio': [0, 0],
+        'back': [0, 0],
+        'melee': [0, 0],
+        'abnormal': [0, 0],
       }
       for (let tier in this.selectedBuffs) {
         for (let buffType in this.selectedBuffs[tier]) {
@@ -461,16 +481,17 @@ export default {
     updateEquivalences() {
       const buffedStats = applyChanges(this.stats, this.getBuffStats())
       const critStats = applyChanges(buffedStats, {'critical': [this.equivalenceValues.critical, 0]})
-      let critIncrease = compareDamage(
-        getAverageDamage(
+
+      let critIncrease = getAverageDamage(
+        compareDamage(
           calculateDamage(buffedStats, this.settings, this.defenses, 'normal'), 
-          calculateDamage(buffedStats, this.settings, this.defenses, 'boss'), 
-          this.settings.bossWeight
-        ),
-        getAverageDamage(
           calculateDamage(critStats, this.settings, this.defenses, 'normal'), 
+        ),
+        compareDamage(
+          calculateDamage(buffedStats, this.settings, this.defenses, 'boss'), 
           calculateDamage(critStats, this.settings, this.defenses, 'boss'), 
-          this.settings.bossWeight)
+        ),
+        this.settings.bossWeight
       )
       critIncrease *= 100
 
@@ -490,39 +511,48 @@ export default {
         'normal': {
           'multiplier': 1,
           'flat': 0,
-          'mitigation': 0
+          'mitigation': 0,
+          'phasing': 0
         },
         'boss': {
           'multiplier': 1,
           'flat': 0,
-          'mitigation': 0
+          'mitigation': 0,
+          'phasing': 0
         }
       }
       if (this.settings.target === '7k') {
         newDef.normal.multiplier = 0.402
         newDef.normal.flat = 500000
         newDef.normal.mitigation = 0.53
+        newDef.normal.phasing = 0.00
 
         newDef.boss.multiplier = 0.31
         newDef.boss.flat = 1000000
         newDef.boss.mitigation = 0.75
+        newDef.boss.phasing = 0.65
       }
 
       this.defenses.normal.multiplier = newDef.normal.multiplier
       this.defenses.normal.flat = newDef.normal.flat
       this.defenses.normal.mitigation = newDef.normal.mitigation
+      this.defenses.normal.phasing = newDef.normal.phasing
 
       this.defenses.boss.multiplier = newDef.boss.multiplier
       this.defenses.boss.flat = newDef.boss.flat
       this.defenses.boss.mitigation = newDef.boss.mitigation
+      this.defenses.boss.phasing = newDef.boss.phasing
 
       this.updateAll()
     },
 
-    setSkillFactor(aF, sF, fF) {
+    setSkillFactor(aF, sF, fF, sW, bW) {
       this.settings.aF = aF
       this.settings.sF = sF
       this.settings.fF = fF
+
+      this.settings.summonWeight = sW
+      this.settings.backWeight = bW
     },
 
     clearStats(block) {
@@ -992,14 +1022,14 @@ export default {
     <div class="stat-block">
       <h2 class="damage-block">Additional Parameters</h2>
       <div class='button-spread'>
-        <button @click="setSkillFactor(6000, 140, 150)">Summon Class Average</button>
-        <button @click="setSkillFactor(2100, 138, 192)">Pure Summon</button>
+        <button @click="setSkillFactor(6000, 140, 150, 0.6, 0.25)">Summon Class Average</button>
+        <button @click="setSkillFactor(2100, 138, 192, 1.0, 0.0)">Pure Summon</button>
 
-        <button @click="setSkillFactor(8000, 125, 120)">Direct Class Average</button>
-        <button @click="setSkillFactor(12500, 112, 100)">Pure Direct</button>
+        <button @click="setSkillFactor(8000, 125, 120, 0.4, 0.5)">Direct Class Average</button>
+        <button @click="setSkillFactor(12500, 112, 100, 0.0, 1.0)">Pure Direct</button>
 
-        <button @click="setSkillFactor(7250, 130, 135)">Hybrid Class Average</button>
-        <button @click="setSkillFactor(30000, 112, 100)">Pure Direct High</button>
+        <button @click="setSkillFactor(7250, 130, 135, 0.5, 0.4)">Hybrid Class Average</button>
+        <button @click="setSkillFactor(30000, 112, 100, 0.0, 1.0)">Pure Direct High</button>
       </div>
       <li class="input-container">
         <span class="input-text">Total Stats %</span>
@@ -1017,14 +1047,24 @@ export default {
         <span class="input-perc"></span>
       </li>
       <li class="input-container">
-        <span class="input-text">Minimum Damage Weight</span>
-        <span class="input-full"><input type="range" min="0" max="0.5" step="0.025" class="input-slider" v-model="settings['minWeight']"></span>
+        <span class="input-text">Minimum Weight</span>
+        <span class="input-full"><input type="range" min="0" max="0.5" step="0.5" class="input-slider" v-model="settings['minWeight']"></span>
         <span class="input-perc" id="minWeightText">{{ (settings['minWeight']*100).toFixed(1) }}%</span>
       </li>
       <li class="input-container">
         <span class="input-text">Boss Weight</span>
         <span class="input-full"><input type="range" min="0" max="1" step="0.025" class="input-slider" v-model="settings['bossWeight']"></span>
         <span class="input-perc" id="bossWeightText">{{ (settings['bossWeight']*100).toFixed(1) }}%</span>
+      </li>
+      <li class="input-container">
+        <span class="input-text">Summon Weight</span>
+        <span class="input-full"><input type="range" min="0" max="1" step="0.025" class="input-slider" v-model="settings['summonWeight']"></span>
+        <span class="input-perc" id="summonWeightText">{{ (settings['summonWeight']*100).toFixed(1) }}%</span>
+      </li>
+      <li class="input-container">
+        <span class="input-text">Back/Melee Weight</span>
+        <span class="input-full"><input type="range" min="0" max="1" step="0.025" class="input-slider" v-model="settings['backWeight']"></span>
+        <span class="input-perc" id="backWeightText">{{ (settings['backWeight']*100).toFixed(1) }}%</span>
       </li>
       <li class="input-container">
         <span class="input-text">Target</span>
