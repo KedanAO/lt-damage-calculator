@@ -2,6 +2,7 @@
 import { applyChanges, calculateDamage, compareDamage, getAverageDamage, calculateEquivalenceIncrease } from './utils/ltdc.js'
 import buffs from './utils/buffs.js'
 import { defaultStats, defaultStatsA, defaultStatsB, defaultSettings, defaultSelectedBuffs } from './utils/defaults.js'
+import { classPresets } from './utils/presets.js'
 
 // todo: 
 // - improve about window
@@ -37,6 +38,8 @@ export default {
       settings: {},
       buffs,
       selectedBuffs: {},
+      classPresets,
+      selectedPreset: 'Hero (Greatsword)',
       
       // names and values that will be displayed
       statNames: {
@@ -555,6 +558,16 @@ export default {
       this.settings.backWeight = bW
     },
 
+    setClassPreset() {    
+      this.setSkillFactor(
+        this.classPresets[this.selectedPreset]['aF'],
+        this.classPresets[this.selectedPreset]['sF'],
+        this.classPresets[this.selectedPreset]['fF'],
+        this.classPresets[this.selectedPreset]['summonWeight'],
+        this.classPresets[this.selectedPreset]['backWeight']
+      )  
+    },
+
     clearStats(block) {
       if (block === 'A') {
         for (let st in this.statsA) {
@@ -864,26 +877,30 @@ export default {
         This window allows you to customize the more technical details of the damage calculation process, typically hidden to players.
         <h4>Factors</h4>
         While every skill within LaTale follows the same damage formula, their damage is differentiated by those three factor values which are different for every skill.
-        The buttons allow you to switch between specific presets, or you can manually edit those if you know your specific skill or specific class recommended factors. 
+        You can use the buttons or the preset drop down to switch between generic values for types of class or specific classes.
         <br><br>
-        The Average presets will give you numbers recommended to use for specific classes, weighing all their different skills together for a value that'll help contribute
-        to their overall damage better than enhancing specific skills.
-        <br><br>
-        The Pure presets are the exact numbers used for direct or summon skills, if you want to test for a more specific skill.
-
         For more information on how both of those factors behave, read the damage formula below.
+        <h4>Summon Weight</h4>
+        This setting will directly multiply the efficiency of Strength/Magic Ratio. Strength/Magic Ratio is a stat that only applies to Direct/Bleed hits, so it will benefit 
+        certain skills and classes more than others.
+        <br><br>
+        This setting is also altered by presets.
+        <h4>Back/Melee Weight</h4>
+        This setting will directly multiply the efficiency of Back Attack, Melee and Status Damage. These stats are only applied for Direct hits and when valid, so their 
+        overall efficiency may vary largely depending on class.
+        <br><br>
+        This setting is also altered by presets.
         <h4>Minimum Weight</h4>
         When actually dealing damage in the game, every hit will roll a random value between your Minimum and Maximum damage and utilize that value for that specific hit.
         For the purposes of this calculator, we utilize a <em>Minimum Weight</em> value within the additional parameters to determine how much both of those stats influence in the
         average damage.
         <br><br>
-        Typically, the recommended values for Minimum Weight are:
-        <br>- <strong> 0%</strong>: Considering only maximum damage, when LL6 is active or for more accurate damage testing.
-        <br>- <strong>30%</strong>: Considering optimal usage of LL6 when awakened, where you'd use it whenever it's off cooldown within a dungeon run.
-        <br>- <strong>50%</strong>: General scenarios where you don't use LL6 at all.
+        Minimum Weight has two settings available:
+        <br>- <strong> 0%</strong>: Considering only maximum damage, for more precise testing. Only valid realistically within the Training Room or if your Minimum Damage surpasses your Maximum.
+        <br>- <strong>50%</strong>: General scenarios where Minimum and Maximum are given equal value.
         <h4>Boss Weight</h4>
         The average damage displayed under each stat block refers to a generic average amount of damage you'd do in your runs, between normal and boss damage. This value is simply
-        a weighted average between Normal and Boss damage, set by the Boss Weight. In the current endgame meta (5k, 6k, 7k), it's recommended to set it to 50%.
+        a weighted average between Normal and Boss damage, set by the Boss Weight. In the current endgame meta (7k, 8k, 9k, 9999), it's recommended to set it to 50%.
         Note that this does not mean Normal or Boss are particularly more worthwhile investing than the other - this will differ depending on class, playstyle and personal preferences.
         <h4>Target</h4>
         This option allows you to select a different target which will heavily influence your damage and how each stat increases it due to how the defense mechanics work.
@@ -893,7 +910,8 @@ export default {
         <br>
         - <strong>7k Mobs</strong>: Mobs found within the 7000 dungeon in normal mode. These mobs will have defense scaling, damage mitigation and a moderate amount of flat defense, the boss having a greater amount of all of those.
         <br><br>
-        Currently, the durable dummies inside of the Training Room instance dungeon have the same defense stats as the 7k dungeon mobs, so those can be used for fairly accurate testing.
+        Currently, the durable dummies inside of the Training Room instance dungeon have the same defense stats as the 7k dungeon mobs, so those can be used for fairly accurate testing. Next update 
+        will alter their stats to 9999 dungeon mobs, which will be an additional option here later.
         <br>
         For more information about how the calculator considers defense, read the damage formula below.
       </div>
@@ -951,11 +969,13 @@ export default {
         <br>
         - For direct damage, Strength Factor is equivalent to your Strength/Magic Ratio hidden stat, and the Attack Factor is approximately the Skill Multiplier displayed in the skill's details divided by 50, scaling with levels.
         <br>
-        - Final Factor is a hidden value present in summon damage that multiplies the final damage by a further amount, scaling with levels. It is fixed at 1 for direct damage.
+        - Final Factor is a hidden value present in summon damage that multiplies the final damage by a further amount, scaling with levels. It is fixed at 100% for direct damage.
         <br>
-        - Bleed (Additional Damage) functions similarly to direct damage, except Attack Factor will most often not scale with skill levels, although there are a few exceptions.
+        - Bleed (Additional Damage) functions similarly to direct damage, except the Attack Factor may be a fixed value that cannot scale with levels. This is also hidden and must be tested.
         <br>
-        For more information on factors, the values of the factors for each class' skills and recommended factors to use within the calculator for each class, please see: <a href="https://docs.google.com/spreadsheets/d/1bG7M5-Te25STBjsiYi0H1dzmLalvaVViuLaxzCHNXTM/edit?usp=sharing">[LaTale] Factor Data</a>
+        For more information on factors, the values of the factors for each class' skills and recommended factors to use within the calculator for each class, please see: <a href="https://docs.google.com/spreadsheets/d/1MfCYueKjViUK7iJOH6KDL-KvTpjOygip0hFOwbUq96w/edit?usp=sharing">[LaTale] Factor Data</a>
+        <br>
+        Note that the used presets for each class here are slightly different from the ones described within the spreadsheet, mainly due to how the damage formula functions, but they will have similar outcomes in terms of stat investment.
       </div>
       <h3>Minimum Weight <span @click="toggleInfoSection('minimum')" class="hide-section">{{ infoSections['minimum'] ? '[hide]' : '[show]' }}</span></h3>
       <div v-if="infoSections['minimum']">
@@ -1008,11 +1028,25 @@ export default {
         There are slight exceptions - in testing against enemies with high amounts of defense this value might increase slightly, but generally won't pass 1.3%. That said, 
         within the calculator, we will always consider 98 penetration when checking for damage against targets with defense, as that is the recommended value to aim for at
         endgame.
-        <h4>Back Attack Damage</h4>
-        Back attack damage only applies when hitting the back side of enemies, which makes it very difficult to utilize in normal situations, only being very effective for classes
-        with high mobility and stuns, or in party play scenarios. Currently, it is not available within the calculator, however, if you are curious as to how back attack damage is
-        applied, Korean players have done some research and come to the conclusion that Back Attack is added to Critical Damage, but ignores part of the bosses' additional damage 
-        mitigation when changing phases. You can read more at <a href="https://cafe.naver.com/f-e/cafes/25910938/articles/270770?boardtype=L&menuid=185&referrerAllArticles=false">this link</a> (in Korean).
+        <h4>Special Direct Damage Stats</h4>
+        Back Attack only applies when hitting the back side of enemies, which makes it difficult to utilize in normal situations, only being very effective for classes
+        with high mobility and stuns, or in party play scenarios. However, due to recent endgame bosses having rather long attack animations, it has become very consistent to 
+        utilize it versus bosses.
+        <br></br><br></br>
+        Melee Damage follows a similar principle, working when your character is within 160 map X coordinates of the target mob, which certain classes can utilize very well 
+        and some bosses are very easy to abuse this on.
+        <br></br><br></br>
+        Status Damage on the other hand only works on mobs afflicted by Bind, Stun, Confusion or Sleep, which generally means certain classes will always have it active versus 
+        normal mobs but it will not work versus any bosses, as they are immune to all those status effects. 
+        <br></br><br></br>
+        All of these stats function in an unique way in that they only work for Direct hits, and will not apply on Bleeds or Summons. When valid, these stats add directly to 
+        your Critical Damage but also have a special effect that ignores the Critical Mitigation that bosses acquire when changing phases, which can be very significant against 
+        8-player dungeon bosses during their final phase, making Back Attack and Melee Damage nearly thrice as effective. Status Damage does not benefit from this aspect as it 
+        cannot affect bosses.
+        <br></br><br></br>
+        The calculator uses an approximation of the Critical Mitigation ignoring effect in order to calculate the increased damage from these stats.
+        <br></br>
+        You can read more at <a href="https://cafe.naver.com/f-e/cafes/25910938/articles/270770?boardtype=L&menuid=185&referrerAllArticles=false">this link</a> (in Korean).
       </div>
     </div>
   </div>
@@ -1022,15 +1056,24 @@ export default {
     <div class="stat-block">
       <h2 class="damage-block">Additional Parameters</h2>
       <div class='button-spread'>
-        <button @click="setSkillFactor(6000, 140, 150, 0.6, 0.25)">Summon Class Average</button>
-        <button @click="setSkillFactor(2100, 138, 192, 1.0, 0.0)">Pure Summon</button>
+        <button @click="setSkillFactor(6250, 125, 140, 0.5, 0.275)">Summon Class Average</button>
+        <button @click="setSkillFactor(2100, 140, 200, 1.0, 0.0)">Pure Summon</button>
 
-        <button @click="setSkillFactor(8000, 125, 120, 0.4, 0.5)">Direct Class Average</button>
-        <button @click="setSkillFactor(12500, 112, 100, 0.0, 1.0)">Pure Direct</button>
+        <button @click="setSkillFactor(10000, 115, 120, 0.275, 0.55)">Direct Class Average</button>
+        <button @click="setSkillFactor(15000, 100, 100, 0.0, 1.0)">Pure Direct</button>
 
-        <button @click="setSkillFactor(7250, 130, 135, 0.5, 0.4)">Hybrid Class Average</button>
-        <button @click="setSkillFactor(30000, 112, 100, 0.0, 1.0)">Pure Direct High</button>
+        <button @click="setSkillFactor(8000, 120, 135, 0.425, 0.35)">Hybrid Class Average</button>
+        <button @click="setSkillFactor(30000, 100, 100, 0.0, 1.0)">Pure Direct High</button>
       </div>
+      <li class="input-container">
+        <span class="input-text">Presets: </span>
+        <span>
+          <select v-model="selectedPreset" @change="setClassPreset">
+            <option v-for="c in Object.keys(classPresets)" :value="c">{{ c }}</option>
+          </select>
+        </span>
+        <span class="input-perc"></span>
+      </li>
       <li class="input-container">
         <span class="input-text">Total Stats %</span>
         <span><input type="text" inputmode="numeric" class="input-full" v-model.number="settings['sF']"></span>
@@ -1047,16 +1090,6 @@ export default {
         <span class="input-perc"></span>
       </li>
       <li class="input-container">
-        <span class="input-text">Minimum Weight</span>
-        <span class="input-full"><input type="range" min="0" max="0.5" step="0.5" class="input-slider" v-model="settings['minWeight']"></span>
-        <span class="input-perc" id="minWeightText">{{ (settings['minWeight']*100).toFixed(1) }}%</span>
-      </li>
-      <li class="input-container">
-        <span class="input-text">Boss Weight</span>
-        <span class="input-full"><input type="range" min="0" max="1" step="0.025" class="input-slider" v-model="settings['bossWeight']"></span>
-        <span class="input-perc" id="bossWeightText">{{ (settings['bossWeight']*100).toFixed(1) }}%</span>
-      </li>
-      <li class="input-container">
         <span class="input-text">Summon Weight</span>
         <span class="input-full"><input type="range" min="0" max="1" step="0.025" class="input-slider" v-model="settings['summonWeight']"></span>
         <span class="input-perc" id="summonWeightText">{{ (settings['summonWeight']*100).toFixed(1) }}%</span>
@@ -1065,6 +1098,16 @@ export default {
         <span class="input-text">Back/Melee Weight</span>
         <span class="input-full"><input type="range" min="0" max="1" step="0.025" class="input-slider" v-model="settings['backWeight']"></span>
         <span class="input-perc" id="backWeightText">{{ (settings['backWeight']*100).toFixed(1) }}%</span>
+      </li>
+      <li class="input-container">
+        <span class="input-text">Minimum Weight</span>
+        <span class="input-full"><input type="range" min="0" max="0.5" step="0.5" class="input-slider" v-model="settings['minWeight']"></span>
+        <span class="input-perc" id="minWeightText">{{ (settings['minWeight']*100).toFixed(1) }}%</span>
+      </li>
+      <li class="input-container">
+        <span class="input-text">Boss Weight</span>
+        <span class="input-full"><input type="range" min="0" max="1" step="0.025" class="input-slider" v-model="settings['bossWeight']"></span>
+        <span class="input-perc" id="bossWeightText">{{ (settings['bossWeight']*100).toFixed(1) }}%</span>
       </li>
       <li class="input-container">
         <span class="input-text">Target</span>

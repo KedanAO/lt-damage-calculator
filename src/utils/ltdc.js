@@ -118,14 +118,14 @@ export function calculateEquivalenceIncrease(stats, settings, defenses, increase
 
   let equivalence = {};
 
-  console.log(nBase*(critP*(1-nDefPha)/100)*minMaxCalc*nAmpCalc/nDmg*(1-bossW))
-  console.log(bBase*(critP*(1-bDefPha)/100)*minMaxCalc*bAmpCalc/bDmg*bossW)
-  console.log(nBase*(critP*(1-nDefPha)/100)*minMaxCalc*nAmpCalc/nDmg*(1-bossW)+bBase*(critP*(1-bDefPha)/100)*minMaxCalc*bAmpCalc/bDmg*bossW)
+  // console.log(nBase*(critP*(1-nDefPha)/100)*minMaxCalc*nAmpCalc/nDmg*(1-bossW))
+  // console.log(bBase*(critP*(1-bDefPha)/100)*minMaxCalc*bAmpCalc/bDmg*bossW)
+  // console.log(nBase*(critP*(1-nDefPha)/100)*minMaxCalc*nAmpCalc/nDmg*(1-bossW)+bBase*(critP*(1-bDefPha)/100)*minMaxCalc*bAmpCalc/bDmg*bossW)
 
-  console.log(nBase + ' | ' + bBase)
-  console.log(nAmpCalc + ' | ' + bAmpCalc)
-  console.log(nDmg + ' | ' + bDmg)
-  console.log(r)
+  // console.log(nBase + ' | ' + bBase)
+  // console.log(nAmpCalc + ' | ' + bAmpCalc)
+  // console.log(nDmg + ' | ' + bDmg)
+  // console.log(r)
 
   equivalence.strength = [r/(sF*strP*nMultis/nDmg*(1-bossW)+sF*strP*bMultis/bDmg*bossW), r/(sF*str*nMultis/nDmg*(1-bossW)+sF*str*bMultis/bDmg*bossW) * 100];
   equivalence.attack = [r/(aF*atkP*nMultis/nDmg*(1-bossW)+aF*atkP*bMultis/bDmg*bossW), r/(aF*atk*nMultis/nDmg*(1-bossW)+aF*atk*bMultis/bDmg*bossW) * 100];
