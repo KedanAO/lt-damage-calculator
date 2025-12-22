@@ -4,7 +4,7 @@ export function applyChanges(stats, changes){
   let changedStats = {};
 
   for (let s in stats) {
-    rawStats[s] = stats[s][0] / stats[s][1] * 100;
+    rawStats[s] = stats[s][0] / (stats[s][1] / 100 + 1);
     rawMults[s] = stats[s][1];
   }
 
@@ -14,7 +14,7 @@ export function applyChanges(stats, changes){
   };
   
   for (let s in rawStats) {
-    changedStats[s] = [rawStats[s] * rawMults[s] / 100, rawMults[s]]
+    changedStats[s] = [rawStats[s] * (rawMults[s] / 100 + 1), rawMults[s]]
   };
 
   return changedStats;
@@ -57,14 +57,14 @@ export function calculateEquivalenceIncrease(stats, settings, defenses, increase
   // newDamage = stat to be increased's multipliers * increase + old damage, solve for increase
   // work the damage formula backwards to solve for each stat with the other provided stats and the increasePercent
   // due to the large amount of variables, the equations are very long so some auxiliary variables are used
-  const strP = stats.strength[1]/100;
-  const atkP = stats.attack[1]/100;
-  const statP = stats.static[1]/100;
-  const nAddP = stats.normalAdded[1]/100;
-  const bAddP = stats.bossAdded[1]/100;
-  const critP = stats.critical[1]/100;
-  const minP = stats.minimum[1]/100;
-  const maxP = stats.maximum[1]/100;
+  const strP = stats.strength[1]/100+1;
+  const atkP = stats.attack[1]/100+1;
+  const statP = stats.static[1]/100+1;
+  const nAddP = stats.normalAdded[1]/100+1;
+  const bAddP = stats.bossAdded[1]/100+1;
+  const critP = stats.critical[1]/100+1;
+  const minP = stats.minimum[1]/100+1;
+  const maxP = stats.maximum[1]/100+1;
 
   const str = stats.strength[0] / strP;
   const atk = stats.attack[0] / atkP;

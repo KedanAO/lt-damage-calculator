@@ -146,6 +146,13 @@ export const classPresets = {
         'summonWeight': 0.35,
         'backWeight': 0.425,
     },
+    'Dokkaebi': {
+        'sF': 122,
+        'aF': 7486,
+        'fF': 138,
+        'summonWeight': 0.45,
+        'backWeight': 0.35,
+    },
     'Highlander': {
         'sF': 121,
         'aF': 7958,

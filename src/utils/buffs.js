@@ -62,10 +62,9 @@ const buffs = {
     'single': {
       'Hero Nostrum I': {'maximum':[15,0], 'critical':[20,0], 'strength':[100,0]},
       'Hero Nostrum II': {'attack':[0,10], 'minimum':[15,0]},
-      'Sweet Mutant Critical': {'critical':[40,0]},
-      'Sweet Mutant Maximum': {'maximum':[40,0]},
       'Guild Banana/Juice': {'critical':[30,0]},
       'Fatal Perfume': {'critical':[30,0]},
+      "Gaia's Blessing": {'minimum':[30,0],'maximum':[30,0]},
     },
     'Rep Food': {
       'Reputation Abalone Champon': {'attack':[0,5]},
@@ -88,19 +87,21 @@ const buffs = {
   },
   'Maxed': {
     'single': {
-      'Long Eastland Ice Tea': {'attack':[30,0], 'critical':[20,0]},
       'Fisherman Blessing': {'critical':[50,0]},
+      'Excellent Luck': {'critical':[20,0]},
+      'Adventure Battle Potion': {'strength':[5000,0]},
+      'Royal Storm Potion': {'critical':[30,0]},
       'Strength/Magic Holy Water': {'strength':[0,10]},
       'Dual Critical Damage I Holy Water': {'critical':[40,0]},
       'Dual Critical Damage II Holy Water': {'critical':[40,0]},
       'Attack/Elemental Intensity Holy Water': {'attack':[0,10]},
       'Dual Damage Holy Water': {'minimum':[30,0],'maximum':[30,0]},
-      'Excellent Luck': {'critical':[20,0]},
-      'Adventure Battle Potion': {'strength':[5000,0]},
     },
   },
   'Event': {
     'single': {
+      'Strawberry Jam Cookie': {'minimum':[30,0],'maximum':[30,0]},
+      'Etoile Bungbung Drink': {'attack':[50,0],'maximum':[15,0]},
       'Fun Blessing': {'maximum':[40,0], 'critical':[60,0]},
       'Special Combat Potion': {'critical':[30,0], 'maximum':[30,0]},
       'Special Helper Potion': {'strength':[0,2]},
@@ -111,20 +112,9 @@ const buffs = {
       'Ice Water': {'critical':[50,0]},
       'Honey Cookie': {'maximum':[50,0],'attack':[0,5]}
     },
-    'Bungbung': {
-      'Eastland Bungbung Drink': {'attack':[50,0]},
-      'Freios Bungbung Drink': {'maximum':[15,0]},
-    },
     'Summer Combat': {
       'Maximum': {'maximum':[50,0]},
       'Critical': {'critical':[50,0]},
-    },
-    'Attendance Drink': {
-      'Minimum': {'minimum':[30,0]},
-      'Maximum': {'maximum':[30,0]},
-      'Basic': {'strength':[0,5]},
-      'Critical': {'critical':[30,0]},
-      'Attack/Intensity': {'attack':[0,5]},
     },
     'Sunburst Soul Potion': {
       'Attack %': {'attack':[0,10]},
@@ -142,17 +132,13 @@ const buffs = {
     },
   },
   'Skillbooks': {
-    'Attendance': {
-      "King's Attendance": {'strength':[0,10], 'maximum':[10,0]},
-      'I Am An Artisan': {'strength':[0,10], 'minimum':[20,0], 'maximum':[20,0]},
-    },
     'single': {
+      'I Am an Attendance Master': {'strength':[0,7],'minimum':[20,0],'maximum':[20,0]},
       'Guild Blessing': {'maximum':[10,0], 'critical':[10,0]},
       'Quiz Master': {'critical':[30,0], 'maximum':[30,0]},
       "Hunter's Power": {'strength':[0,2], 'maximum':[10,0], 'critical':[10,0]},
       'Shadow Effect': {'attack':[30,0]},
       "Attacker's Skill": {'attack':[30,5]},
-      "Dark Dragon's Power": {'strength':[10000,0], 'critical':[50,0], 'maximum':[50,0]},
       "Master Hero's Mark": {'strength':[0,3]},
       'Skillbook of Patronage': {'strength':[0,5], 'critical':[15,0]},
       'GM Superpower': {'critical':[10,0]},

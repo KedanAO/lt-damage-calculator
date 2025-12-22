@@ -32,14 +32,15 @@ body {
 }
 
 .input-full, .input-slider {
-  width: 80px;
+  width: 60px;
   text-align: center;
 }
 
 .input-perc {
-  width: 40px;
+  margin-left: 5px;
+  width: 30px;
+  text-align: center;
 }
-
 .title {
   display: flex;
   justify-content: space-evenly;

@@ -1,18 +1,18 @@
 export const defaultStats = {
-  'strength': [4944434, 510],
-  'attack': [42275, 438],
-  'critical': [7395, 136],
-  'minimum': [6363, 136],
-  'maximum': [6888, 128],
-  'static': [811391, 204],
-  'normalAdded': [821361, 113],
-  'bossAdded': [920951, 125],
-  'normalAmp': [65.5, 100],
-  'bossAmp': [65.4, 100],
-  'ratio': [17, 100],
-  'back': [569, 100],
-  'melee': [120, 100],
-  'abnormal': [0, 100]
+  'strength': [4944434, 410],
+  'attack': [42275, 338],
+  'critical': [7395, 36],
+  'minimum': [6363, 36],
+  'maximum': [6888, 28],
+  'static': [811391, 14],
+  'normalAdded': [821361, 13],
+  'bossAdded': [920951, 25],
+  'normalAmp': [65.5, 0],
+  'bossAmp': [65.4, 0],
+  'ratio': [17, 0],
+  'back': [569, 0],
+  'melee': [120, 0],
+  'abnormal': [0, 0]
 }
 
 export const defaultStatsA = {
@@ -80,10 +80,9 @@ export const defaultSelectedBuffs = {
     'single': {
       'Hero Nostrum I': true,
       'Hero Nostrum II': true,
-      'Sweet Mutant Critical': true,
-      'Sweet Mutant Maximum': true,
       'Guild Banana/Juice': true,
       'Fatal Perfume': true,
+      "Gaia's Blessing": false,
     },
     'Rep Food': 'Reputation Abalone Champon',
     'Syrup': 'Advanced Premium Syrup',
@@ -92,19 +91,21 @@ export const defaultSelectedBuffs = {
   },
   'Maxed': {
     'single': {
-      'Long Eastland Ice Tea': false,
       'Fisherman Blessing': false,
+      'Excellent Luck': false,
+      'Adventure Battle Potion': false,
+      'Royal Storm Potion': false,
       'Strength/Magic Holy Water': false,
       'Dual Critical Damage I Holy Water': false,
       'Dual Critical Damage II Holy Water': false,
       'Attack/Elemental Intensity Holy Water': false,
       'Dual Damage Holy Water': false,
-      'Excellent Luck': false,
-      'Adventure Battle Potion': false,
     },
   },
   'Event': {
     'single': {
+      'Strawberry Jam Cookie': false,
+      'Etoile Bungbung Drink': false,
       'Fun Blessing': false,
       'Special Combat Potion': false,
       'Special Helper Potion': false,
@@ -126,12 +127,12 @@ export const defaultSelectedBuffs = {
   },
   'Skillbooks': {
     'single': {
+      'I Am an Attendance Master': false,
       'Guild Blessing': false,
       'Quiz Master': false,
       "Hunter's Power": false,
       'Shadow Effect': false,
       "Attacker's Skill": false,
-      "Dark Dragon's Power": false,
       "Master Hero's Mark": false,
       'Skillbook of Patronage': false,
       'GM Superpower': false,

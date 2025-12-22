@@ -56,7 +56,7 @@ export default {
         'ratio': 'Strength/Magic Ratio',
         'back': 'Back Attack Damage',
         'melee': 'Melee Damage',
-        'abnormal': 'Abnormal Damage'
+        'abnormal': 'Status Damage'
       },
       damage: {
         avg: ['---', '---', '---'],
@@ -144,9 +144,9 @@ export default {
       tooltipText: '',
       expText: '',
       expInfo: '',
-      percentText: 'To calculate, write down your stat as displayed in the stat window\n' +
-        'and then use ascension stats to reduce the stat then use the formula:\n' + 
-        '(Natural Stat - Reduced Stat) / Reduced Amount',
+      statText: 'Insert values as they are seen in your status window.\n' +
+        'Value is the full amount displayed in the Detailed Stats, \n' + 
+        'while % is the percent displayed in the Additional Details.',
       infoSections: {
         'basicsCalc': true,
         'calculator': true,
@@ -459,17 +459,15 @@ export default {
           case 'Midterm': 
             this.selectedBuffs[tier]['Syrup'] = swap ? 'Advanced Premium Syrup' : 'None'
             this.selectedBuffs[tier]['Booster'] = swap ? 'Union Critical Booster' : 'None'
-            this.selectedBuffs[tier]['Rep Food'] = swap ? 'Reputation Galbijjim' : 'None'
+            this.selectedBuffs[tier]['Rep Food'] = swap ? 'Reputation Abalone Champon' : 'None'
+            this.selectedBuffs[tier]['Alvis Helper Potion'] = swap ? 'Critical' : 'None'
             break
           case 'Maxed':
             break
           case 'Event':
-            this.selectedBuffs[tier]['Bungbung'] = swap ? 'Eastland Bungbung Drink' : 'None'
-            this.selectedBuffs[tier]['Summer Combat'] = swap ? 'Critical' : 'None'
-            this.selectedBuffs[tier]['Attendance Drink'] = swap ? 'Critical' : 'None'
             break
           case 'Skillbooks':
-            this.selectedBuffs[tier]['Attendance'] = swap ? 'I Am An Artisan' : 'None'
+            break
         }
       }
     },
@@ -681,14 +679,23 @@ export default {
       <ul>
         <li class="input-container input-header">
           <span class="input-text">Stat</span><span class="input-full">Value</span>
-          <span class="input-perc"
-          @mouseenter="tooltip = true; tooltipText = percentText" 
-          @mousemove.self="onMouseMove($event)" @mouseleave="tooltip=false">%</span>
+          <span class="input-perc">%</span>
         </li>
         <li class="input-container" v-for="stat in Object.keys(stats)" :key="stat">
           <span class="input-text">{{ statNames[stat] }}</span>
-          <span class="input-full"><input type="text" inputmode="numeric" class="input-full" v-model.number="stats[stat][0]" :id="stat + '-d-V'"></span>
-          <span class="input-perc"><input type="text" inputmode="numeric" class="input-perc" v-model.number="stats[stat][1]" :id="stat + '-d-P'"></span>
+          <span class="input-full">
+            <input type="text" inputmode="numeric" class="input-full" v-model.number="stats[stat][0]" :id="stat + '-d-V'"
+            @mouseenter="tooltip = true; tooltipText = statText" 
+            @mousemove.self="onMouseMove($event)" @mouseleave="tooltip=false">
+          </span>
+          <span v-if="['normalAmp', 'bossAmp', 'ratio', 'back', 'melee', 'abnormal'].includes(stat)" class="input-perc">
+            <span class="input-perc"></span>
+          </span v-if>
+          <span v-else class="input-perc">
+            <input type="text" inputmode="numeric" class="input-perc" v-model.number="stats[stat][1]" :id="stat + '-d-P'"
+            @mouseenter="tooltip = true; tooltipText = statText" 
+            @mousemove.self="onMouseMove($event)" @mouseleave="tooltip=false">
+          </span>
         </li>
       </ul>
       <div class="damage-block">
@@ -741,7 +748,12 @@ export default {
         <li class="input-container" v-for="stat in Object.keys(stats)" :key="stat">
           <span class="input-text">{{ statNames[stat] }}</span>
           <span class="input-full"><input type="text" inputmode="numeric" class="input-full" v-model.number="statsA[stat][0]" :id="stat + '-a-V'"></span>
-          <span class="input-perc"><input type="text" inputmode="numeric" class="input-perc" v-model.number="statsA[stat][1]" :id="stat + '-a-P'"></span>
+          <span v-if="['normalAmp', 'bossAmp', 'ratio', 'back', 'melee', 'abnormal'].includes(stat)" class="input-perc">
+            <span class="input-perc"></span>
+          </span v-if>
+          <span v-else class="input-perc">
+            <input type="text" inputmode="numeric" class="input-perc" v-model.number="statsA[stat][1]" :id="stat + '-a-P'">
+          </span>
         </li>
       </ul>
       <div class="damage-block">
@@ -799,7 +811,12 @@ export default {
         <li class="input-container" v-for="stat in Object.keys(stats)" :key="stat">
           <span class="input-text">{{ statNames[stat] }}</span>
           <span class="input-full"><input type="text" inputmode="numeric" class="input-full" v-model.number="statsB[stat][0]" :id="stat + '-b-V'"></span>
-          <span class="input-perc"><input type="text" inputmode="numeric" class="input-perc" v-model.number="statsB[stat][1]" :id="stat + '-b-P'"></span>
+          <span v-if="['normalAmp', 'bossAmp', 'ratio', 'back', 'melee', 'abnormal'].includes(stat)" class="input-perc">
+            <span class="input-perc"></span>
+          </span v-if>
+          <span v-else class="input-perc">
+            <input type="text" inputmode="numeric" class="input-perc" v-model.number="statsB[stat][1]" :id="stat + '-b-P'">
+          </span>
         </li>
       </ul>
       <div class="damage-block">
