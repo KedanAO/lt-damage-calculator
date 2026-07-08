@@ -1,5 +1,5 @@
 <script>
-import { applyChanges, calculateDamage, compareDamage, getAverageDamage, calculateEquivalenceIncrease } from './utils/ltdc.js'
+import { applyChanges, calculateDamage, compareDamage, getAverageDamage, calculateEquivalenceIncrease, calculateCombatPower } from './utils/ltdc.js'
 import buffs from './utils/buffs.js'
 import { defaultStats, defaultStatsA, defaultStatsB, defaultSettings, defaultSelectedBuffs } from './utils/defaults.js'
 import { classPresets } from './utils/presets.js'
@@ -130,6 +130,11 @@ export default {
         'perc': 1,
         'critical': 10
       },
+      combatPower: {
+        'direct': 0,
+        'summon': 0,
+        'total': 0
+      },
 
       // other
       displayWindow: {
@@ -203,6 +208,7 @@ export default {
     compareDamage,
     getAverageDamage,
     calculateEquivalenceIncrease,
+    calculateCombatPower,
 
     // formatting values that are displayed
     formatDamage(damage) {
@@ -532,6 +538,30 @@ export default {
         newDef.boss.flat = 1000000
         newDef.boss.mitigation = 0.75
         newDef.boss.phasing = 0.65
+      } else if (this.settings.target === 'sLv5') {
+        newDef.normal.multiplier = 0.445
+        newDef.normal.flat = 1010000
+        newDef.normal.mitigation = 0.00
+        newDef.normal.phasing = 0.578 // 0.578
+
+        newDef.boss.multiplier = 0.30
+        newDef.boss.flat = 1300000
+        newDef.boss.mitigation = 0.68
+        newDef.boss.phasing = 0.69
+        // crit * phasing = dmg1 -> (8811 * phasing) * rest = 12899b
+        // crit * phasing + back = dmg2 = (8811 * phasing + 929) * rest = 17289b
+        // effect of 929 back atk = 4390b = 34% dmg up
+        // (8811 * phasing + 929) / (8811 * phasing) = 1.34
+        // (8811 * phasing + 929) = 1.34 * (8811 * phasing)
+        // (8811 * phasing + 929) - 1.34 * (8811 * phasing) = 0
+        // 8811 * (-0.34 * phasing) + 929 = 0
+        // 8811 * -0.34 * phasing = -929
+        // phasing = -929 / (8811 * -0.34)
+        // phasing = 0.31
+
+        // 118185
+        // 94548 -> 1.25
+        // phasing = -929 / (8811 * -0.25) = 0.422
       }
 
       this.defenses.normal.multiplier = newDef.normal.multiplier
@@ -545,6 +575,13 @@ export default {
       this.defenses.boss.phasing = newDef.boss.phasing
 
       this.updateAll()
+    },
+
+    updateCombatPower() {
+      const power = this.calculateCombatPower(this.stats)
+      this.combatPower.direct = power.direct
+      this.combatPower.summon = power.summon
+      this.combatPower.total = power.total
     },
 
     setSkillFactor(aF, sF, fF, sW, bW) {
@@ -587,6 +624,7 @@ export default {
       this.updateIncreases()
       this.updateBuffs()
       this.updateEquivalences()
+      this.updateCombatPower()
     },
 
     resetAll() {
@@ -735,6 +773,23 @@ export default {
         <div class="damage-container">
           <span class="damage-text">Normal</span>
           <span class="damage-text">Boss</span>
+        </div>
+        <div>
+        </div>
+      </div>
+      <div class="damage-block">
+        <h2>Approximate Combat Power</h2>
+        <span class="damage-top">{{ Intl.NumberFormat("en-US" , {maximumFractionDigits: 0}).format(combatPower.total) }}</span>
+        <div class="damage-container">
+          <span class="damage-text">Average</span>
+        </div>
+        <div class="damage-container">
+          <span class="damage-top">{{ Intl.NumberFormat("en-US" , {maximumFractionDigits: 0}).format(combatPower.direct) }}</span>
+          <span class="damage-top">{{ Intl.NumberFormat("en-US" , {maximumFractionDigits: 0}).format(combatPower.summon) }}</span>
+        </div>
+        <div class="damage-container">
+          <span class="damage-text">Direct</span>
+          <span class="damage-text">Summon</span>
         </div>
         <div>
         </div>
@@ -1073,13 +1128,13 @@ export default {
     <div class="stat-block">
       <h2 class="damage-block">Additional Parameters</h2>
       <div class='button-spread'>
-        <button @click="setSkillFactor(6250, 125, 140, 0.5, 0.275)">Summon Class Average</button>
+        <button @click="setSkillFactor(6250, 125, 140, 0.5, 0.175)">Summon Class Average</button>
         <button @click="setSkillFactor(2100, 140, 200, 1.0, 0.0)">Pure Summon</button>
 
-        <button @click="setSkillFactor(10000, 115, 120, 0.275, 0.55)">Direct Class Average</button>
+        <button @click="setSkillFactor(10000, 115, 120, 0.275, 0.3)">Direct Class Average</button>
         <button @click="setSkillFactor(15000, 100, 100, 0.0, 1.0)">Pure Direct</button>
 
-        <button @click="setSkillFactor(8000, 120, 135, 0.425, 0.35)">Hybrid Class Average</button>
+        <button @click="setSkillFactor(8000, 120, 135, 0.425, 0.225)">Hybrid Class Average</button>
         <button @click="setSkillFactor(30000, 100, 100, 0.0, 1.0)">Pure Direct High</button>
       </div>
       <li class="input-container">
@@ -1130,8 +1185,9 @@ export default {
         <span class="input-text">Target</span>
         <span>
           <select v-model="settings['target']" @change="updateDefenses">
-            <option value="soft">Soft Dummy</option>
-            <option value="7k">7k Mobs</option>
+            <option value="soft">[Arena] Soft Dummy</option>
+            <option value="7k">[7000] Tears of Nornir</option>
+            <option value="sLv5">[sLv5] Rikimo Pelke</option>
           </select>
         </span>
         <span class="input-perc"></span>

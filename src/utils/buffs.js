@@ -6,12 +6,18 @@ const buffs = {
       'Book Buffs': {'attack':[0,5], 'strength':[0,5], 'critical':[0,5]},
       'Flask of Battle': {'attack':[20,5], 'minimum':[10,0], 'maximum':[10,0], 'strength':[0,15], 'critical':[30,0]},
       'Sweet Mutant Special': {'minimum':[40,0], 'critical':[30,0]},
-      'Starkeeper Critical Damage Booster': {'critical':[25,0]},
+      'Guild Banana/Juice': {'critical':[30,0]},
+      'Fatal Perfume': {'critical':[30,0]},
+      'Alvis Helper Potion': {'attack':[0,5], 'critical':[20,0]},
       'Starkeeper Title': {'critical':[200,0]},
     },
     'Food': {
       'Chicken Soup': {'critical':[25,0]},
       'Fried Eel': {'maximum':[20,0]},
+    },
+    'Booster': {
+      'Union Critical Booster': {'critical':[120,0]},
+      'Union Damage Booster': {'minimum':[70,0], 'maximum':[70,0]},
     },
     'Relic': {
       'Orb +0': {'strength':[0,10]},
@@ -62,32 +68,16 @@ const buffs = {
     'single': {
       'Hero Nostrum I': {'maximum':[15,0], 'critical':[20,0], 'strength':[100,0]},
       'Hero Nostrum II': {'attack':[0,10], 'minimum':[15,0]},
-      'Guild Banana/Juice': {'critical':[30,0]},
-      'Fatal Perfume': {'critical':[30,0]},
       "Gaia's Blessing": {'minimum':[30,0],'maximum':[30,0]},
-    },
-    'Rep Food': {
-      'Reputation Abalone Champon': {'attack':[0,5]},
-      'Reputation Galbijjim': {'static':[0,10]},
+      'Fisherman Blessing': {'critical':[50,0]},
     },
     'Syrup': {
       'Premium Syrup': {'critical':[40,0], 'minimum':[30,0], 'maximum':[30,0], 'strength':[0,3], 'attack':[0,3]},
       'Advanced Premium Syrup': {'critical':[60,0], 'minimum':[50,0], 'maximum':[50,0], 'strength':[0,5], 'attack':[0,5]},
     },
-    'Booster': {
-      'Union Critical Booster': {'critical':[120,0]},
-      'Union Damage Booster': {'minimum':[70,0], 'maximum':[70,0]},
-    },
-    'Alvis Helper Potion': {
-      'Basic Stats %': {'strength':[0,3]},
-      'Minimum': {'minimum':[20,0]},
-      'Maximum': {'maximum':[20,0]},
-      'Critical': {'critical':[20,0]},
-    }
   },
   'Maxed': {
     'single': {
-      'Fisherman Blessing': {'critical':[50,0]},
       'Excellent Luck': {'critical':[20,0]},
       'Adventure Battle Potion': {'strength':[5000,0]},
       'Royal Storm Potion': {'critical':[30,0]},
@@ -103,8 +93,6 @@ const buffs = {
       'Strawberry Jam Cookie': {'minimum':[30,0],'maximum':[30,0]},
       'Etoile Bungbung Drink': {'attack':[50,0],'maximum':[15,0]},
       'Fun Blessing': {'maximum':[40,0], 'critical':[60,0]},
-      'Special Combat Potion': {'critical':[30,0], 'maximum':[30,0]},
-      'Special Helper Potion': {'strength':[0,2]},
       'Summer Festival Utility Potion': {'strength':[0,10]},
       'Space Food': {'attack':[0,5]},
       'Valentine Chocolate': {'strength':[0,10]},
@@ -135,7 +123,6 @@ const buffs = {
     'single': {
       'I Am an Attendance Master': {'strength':[0,7],'minimum':[20,0],'maximum':[20,0]},
       'Guild Blessing': {'maximum':[10,0], 'critical':[10,0]},
-      'Quiz Master': {'critical':[30,0], 'maximum':[30,0]},
       "Hunter's Power": {'strength':[0,2], 'maximum':[10,0], 'critical':[10,0]},
       'Shadow Effect': {'attack':[30,0]},
       "Attacker's Skill": {'attack':[30,5]},

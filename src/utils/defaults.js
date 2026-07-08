@@ -1,18 +1,18 @@
 export const defaultStats = {
-  'strength': [4944434, 410],
-  'attack': [42275, 338],
-  'critical': [7395, 36],
-  'minimum': [6363, 36],
-  'maximum': [6888, 28],
-  'static': [811391, 14],
-  'normalAdded': [821361, 13],
-  'bossAdded': [920951, 25],
-  'normalAmp': [65.5, 0],
-  'bossAmp': [65.4, 0],
-  'ratio': [17, 0],
-  'back': [569, 0],
-  'melee': [120, 0],
-  'abnormal': [0, 0]
+  'strength': [5549394, 438],
+  'attack': [58140, 374],
+  'critical': [8811, 38],
+  'minimum': [7300, 34],
+  'maximum': [7544, 31],
+  'static': [861135, 105],
+  'normalAdded': [1078171, 13],
+  'bossAdded': [1052579, 14],
+  'normalAmp': [75.1, 0],
+  'bossAmp': [60.8, 0],
+  'ratio': [19, 0],
+  'back': [929, 0],
+  'melee': [340, 0],
+  'abnormal': [92, 0]
 }
 
 export const defaultStatsA = {
@@ -50,14 +50,14 @@ export const defaultStatsB = {
 }
 
 export const defaultSettings = {
-  'aF': 7250,
-  'sF': 130,
-  'fF': 135,
+  'aF': 7486,
+  'sF': 122,
+  'fF': 138,
   'minWeight': 0.5,
   'bossWeight': 0.5,
-  'summonWeight': 0.5,
-  'backWeight': 0.5,
-  'target': '7k'
+  'summonWeight': 0.45,
+  'backWeight': 0.35,
+  'target': 'sLv5'
 }
 
 export const defaultSelectedBuffs = {
@@ -68,10 +68,13 @@ export const defaultSelectedBuffs = {
       'Book Buffs': true,
       'Flask of Battle': true,
       'Sweet Mutant Special': true,
-      'Starkeeper Critical Damage Booster': false,
+      'Guild Banana/Juice': true,
+      'Fatal Perfume': true,
+      'Alvis Helper Potion': true,
       'Starkeeper Title': true,
     },
     'Food': 'Chicken Soup',
+    'Booster': 'Union Critical Booster',
     'Relic': 'Nightmare +4',
     'Guild Relic': '+9',
     'Summonable': 'Awakened Lustral',
@@ -80,18 +83,13 @@ export const defaultSelectedBuffs = {
     'single': {
       'Hero Nostrum I': true,
       'Hero Nostrum II': true,
-      'Guild Banana/Juice': true,
-      'Fatal Perfume': true,
       "Gaia's Blessing": false,
+      'Fisherman Blessing': false,
     },
-    'Rep Food': 'Reputation Abalone Champon',
     'Syrup': 'Advanced Premium Syrup',
-    'Booster': 'Union Critical Booster',
-    'Alvis Helper Potion': 'Critical',
   },
   'Maxed': {
     'single': {
-      'Fisherman Blessing': false,
       'Excellent Luck': false,
       'Adventure Battle Potion': false,
       'Royal Storm Potion': false,
@@ -129,7 +127,6 @@ export const defaultSelectedBuffs = {
     'single': {
       'I Am an Attendance Master': false,
       'Guild Blessing': false,
-      'Quiz Master': false,
       "Hunter's Power": false,
       'Shadow Effect': false,
       "Attacker's Skill": false,

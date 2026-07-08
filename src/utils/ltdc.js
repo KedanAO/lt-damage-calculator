@@ -180,3 +180,51 @@ export function calculateEquivalenceIncrease(stats, settings, defenses, increase
 
   return equivalence;
 };
+
+export function calculateCombatPower(stats) {
+  const staticDmg = stats.static[0];
+  const addedN = stats['normal' + 'Added'][0];
+  const addedB = stats['boss' + 'Added'][0];
+  const critical = (stats.critical[0]) / 100.
+  const min = stats.minimum[0] <= stats.maximum[0] ? stats.minimum[0] : stats.maximum[0];
+  const minmax = (min + stats.maximum[0]) / 200;
+  const ampN = stats['normalAmp'][0] <= 100 ? 1 + stats['normalAmp'][0] / 100 : 2;
+  const ampB = stats['bossAmp'][0] <= 100 ? 1 + stats['bossAmp'][0] / 100 : 2;
+  const multiN = critical * minmax * ampN
+  const multiB = critical * minmax * ampB
+  
+  const skillMultiD = 17600 / 50;
+  
+  const attackD = stats.attack[0] * skillMultiD;
+  const strengthD = stats.strength[0] * (stats.ratio[0] + 100) / 100;
+  const baseND = attackD + strengthD + staticDmg + addedN;
+  const baseBD = attackD + strengthD + staticDmg + addedB;
+  
+  const dmgD = (baseND * multiN + baseBD * multiB) / 2 
+  const powD = dmgD / 100000 * 0.98
+  
+  const skillMultiS = 2000 / 50;
+  const totalStats = 149 / 100;
+  const finalFactor = totalStats * (totalStats + 0.01);
+
+  const attackS = stats.attack[0] * skillMultiS;
+  const strengthS = stats.strength[0] * totalStats;
+  const baseNS = attackS + strengthS + staticDmg + addedN;
+  const baseBS = attackS + strengthS + staticDmg + addedB;
+
+  const dmgS = (baseNS * multiN * finalFactor + baseBS * multiB * finalFactor) / 2;
+  const powS = dmgS / 100000 * 0.98;
+
+  const powA = (powD + powS) / 2;
+
+  const combatPower = {
+    'direct': powD,
+    'summon': powS,
+    'total': powA
+  };
+
+  console.log('(' + stats.strength[0] + ' * ' + stats.ratio[0] + ' + ' + stats.attack[0] + ' * ' + skillMultiD + ' + ' + staticDmg + ' + ' + addedN + ')' + ' * ' + critical + ' * ' + minmax + ' * ' + ampN + ' = ' + baseND * multiN * 0.98)
+  console.log('(' + stats.strength[0] + ' * ' + stats.ratio[0] + ' + ' + stats.attack[0] + ' * ' + skillMultiD + ' + ' + staticDmg + ' + ' + addedB + ')' + ' * ' + critical + ' * ' + minmax + ' * ' + ampB + ' = ' + baseBD * multiB * 0.98)
+
+  return combatPower;
+};
