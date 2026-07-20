@@ -4,13 +4,13 @@ export function applyChanges(stats, changes){
   let changedStats = {};
 
   for (let s in stats) {
-    rawStats[s] = stats[s][0] / (stats[s][1] / 100 + 1);
-    rawMults[s] = stats[s][1];
+    rawStats[s] = Number(stats[s][0]) / (Number(stats[s][1]) / 100 + 1);
+    rawMults[s] = Number(stats[s][1]);
   }
 
   for (let s in changes) {
-    rawStats[s] += changes[s][0]
-    rawMults[s] += changes[s][1]
+    rawStats[s] += Number(changes[s][0])
+    rawMults[s] += Number(changes[s][1])
   };
   
   for (let s in rawStats) {
@@ -223,8 +223,8 @@ export function calculateCombatPower(stats) {
     'total': powA
   };
 
-  console.log('(' + stats.strength[0] + ' * ' + stats.ratio[0] + ' + ' + stats.attack[0] + ' * ' + skillMultiD + ' + ' + staticDmg + ' + ' + addedN + ')' + ' * ' + critical + ' * ' + minmax + ' * ' + ampN + ' = ' + baseND * multiN * 0.98)
-  console.log('(' + stats.strength[0] + ' * ' + stats.ratio[0] + ' + ' + stats.attack[0] + ' * ' + skillMultiD + ' + ' + staticDmg + ' + ' + addedB + ')' + ' * ' + critical + ' * ' + minmax + ' * ' + ampB + ' = ' + baseBD * multiB * 0.98)
+  // console.log('(' + stats.strength[0] + ' * ' + stats.ratio[0] + ' + ' + stats.attack[0] + ' * ' + skillMultiD + ' + ' + staticDmg + ' + ' + addedN + ')' + ' * ' + critical + ' * ' + minmax + ' * ' + ampN + ' = ' + baseND * multiN * 0.98)
+  // console.log('(' + stats.strength[0] + ' * ' + stats.ratio[0] + ' + ' + stats.attack[0] + ' * ' + skillMultiD + ' + ' + staticDmg + ' + ' + addedB + ')' + ' * ' + critical + ' * ' + minmax + ' * ' + ampB + ' = ' + baseBD * multiB * 0.98)
 
   return combatPower;
 };

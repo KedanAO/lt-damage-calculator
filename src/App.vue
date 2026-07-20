@@ -131,9 +131,40 @@ export default {
         'critical': 10
       },
       combatPower: {
-        'direct': 0,
-        'summon': 0,
-        'total': 0
+        'regular': {
+          'direct': 0,
+          'summon': 0,
+          'total': 0
+        },
+        'buffed': {
+          'direct': 0,
+          'summon': 0,
+          'total': 0
+        }
+      },
+      combatPowerA: {
+        'regular': {
+          'direct': 0,
+          'summon': 0,
+          'total': 0
+        },
+        'buffed': {
+          'direct': 0,
+          'summon': 0,
+          'total': 0
+        }
+      },
+      combatPowerB: {
+        'regular': {
+          'direct': 0,
+          'summon': 0,
+          'total': 0
+        },
+        'buffed': {
+          'direct': 0,
+          'summon': 0,
+          'total': 0
+        }
       },
 
       // other
@@ -578,10 +609,38 @@ export default {
     },
 
     updateCombatPower() {
-      const power = this.calculateCombatPower(this.stats)
-      this.combatPower.direct = power.direct
-      this.combatPower.summon = power.summon
-      this.combatPower.total = power.total
+      let power = this.calculateCombatPower(this.stats)
+      this.combatPower.regular.direct = power.direct
+      this.combatPower.regular.summon = power.summon
+      this.combatPower.regular.total = power.total
+      power = this.calculateCombatPower(applyChanges(this.stats, this.getBuffStats()))
+      this.combatPower.buffed.direct = power.direct
+      this.combatPower.buffed.summon = power.summon
+      this.combatPower.buffed.total = power.total
+
+      console.log(this.stats)
+      console.log(this.statsA)
+      console.log(applyChanges(this.stats, this.statsA))
+      console.log(this.getBuffStats())
+      console.log(applyChanges(applyChanges(this.stats, this.statsA), this.getBuffStats))
+
+      power = this.calculateCombatPower(applyChanges(this.stats, this.statsA))
+      this.combatPowerA.regular.direct = power.direct
+      this.combatPowerA.regular.summon = power.summon
+      this.combatPowerA.regular.total = power.total
+      power = this.calculateCombatPower(applyChanges(applyChanges(this.stats, this.statsA), this.getBuffStats()))
+      this.combatPowerA.buffed.direct = power.direct
+      this.combatPowerA.buffed.summon = power.summon
+      this.combatPowerA.buffed.total = power.total
+
+      power = this.calculateCombatPower(applyChanges(this.stats, this.statsB))
+      this.combatPowerB.regular.direct = power.direct
+      this.combatPowerB.regular.summon = power.summon
+      this.combatPowerB.regular.total = power.total
+      power = this.calculateCombatPower(applyChanges(applyChanges(this.stats, this.statsB), this.getBuffStats()))
+      this.combatPowerB.buffed.direct = power.direct
+      this.combatPowerB.buffed.summon = power.summon
+      this.combatPowerB.buffed.total = power.total
     },
 
     setSkillFactor(aF, sF, fF, sW, bW) {
@@ -779,13 +838,30 @@ export default {
       </div>
       <div class="damage-block">
         <h2>Approximate Combat Power</h2>
-        <span class="damage-top">{{ Intl.NumberFormat("en-US" , {maximumFractionDigits: 0}).format(combatPower.total) }}</span>
+        <span class="damage-top">{{ Intl.NumberFormat("en-US" , {maximumFractionDigits: 0}).format(combatPower.regular.total) }}</span>
         <div class="damage-container">
           <span class="damage-text">Average</span>
         </div>
         <div class="damage-container">
-          <span class="damage-top">{{ Intl.NumberFormat("en-US" , {maximumFractionDigits: 0}).format(combatPower.direct) }}</span>
-          <span class="damage-top">{{ Intl.NumberFormat("en-US" , {maximumFractionDigits: 0}).format(combatPower.summon) }}</span>
+          <span class="damage-top">{{ Intl.NumberFormat("en-US" , {maximumFractionDigits: 0}).format(combatPower.regular.direct) }}</span>
+          <span class="damage-top">{{ Intl.NumberFormat("en-US" , {maximumFractionDigits: 0}).format(combatPower.regular.summon) }}</span>
+        </div>
+        <div class="damage-container">
+          <span class="damage-text">Direct</span>
+          <span class="damage-text">Summon</span>
+        </div>
+        <div>
+        </div>
+      </div>
+      <div class="damage-block">
+        <h3>Buffed</h3>
+        <span class="damage-top">{{ Intl.NumberFormat("en-US" , {maximumFractionDigits: 0}).format(combatPower.buffed.total) }}</span>
+        <div class="damage-container">
+          <span class="damage-text">Average</span>
+        </div>
+        <div class="damage-container">
+          <span class="damage-top">{{ Intl.NumberFormat("en-US" , {maximumFractionDigits: 0}).format(combatPower.buffed.direct) }}</span>
+          <span class="damage-top">{{ Intl.NumberFormat("en-US" , {maximumFractionDigits: 0}).format(combatPower.buffed.summon) }}</span>
         </div>
         <div class="damage-container">
           <span class="damage-text">Direct</span>
@@ -857,6 +933,40 @@ export default {
         <div>
         </div>
       </div>
+      <div class="damage-block">
+        <h2>Approximate Combat Power</h2>
+        <span class="damage-top">{{ Intl.NumberFormat("en-US" , {maximumFractionDigits: 0}).format(combatPowerA.regular.total) }}</span>
+        <div class="damage-container">
+          <span class="damage-text">Average</span>
+        </div>
+        <div class="damage-container">
+          <span class="damage-top">{{ Intl.NumberFormat("en-US" , {maximumFractionDigits: 0}).format(combatPowerA.regular.direct) }}</span>
+          <span class="damage-top">{{ Intl.NumberFormat("en-US" , {maximumFractionDigits: 0}).format(combatPowerA.regular.summon) }}</span>
+        </div>
+        <div class="damage-container">
+          <span class="damage-text">Direct</span>
+          <span class="damage-text">Summon</span>
+        </div>
+        <div>
+        </div>
+      </div>
+      <div class="damage-block">
+        <h3>Buffed</h3>
+        <span class="damage-top">{{ Intl.NumberFormat("en-US" , {maximumFractionDigits: 0}).format(combatPowerA.buffed.total) }}</span>
+        <div class="damage-container">
+          <span class="damage-text">Average</span>
+        </div>
+        <div class="damage-container">
+          <span class="damage-top">{{ Intl.NumberFormat("en-US" , {maximumFractionDigits: 0}).format(combatPowerA.buffed.direct) }}</span>
+          <span class="damage-top">{{ Intl.NumberFormat("en-US" , {maximumFractionDigits: 0}).format(combatPowerA.buffed.summon) }}</span>
+        </div>
+        <div class="damage-container">
+          <span class="damage-text">Direct</span>
+          <span class="damage-text">Summon</span>
+        </div>
+        <div>
+        </div>
+      </div>
     </div>
     <!-- changes B -->
     <div class="stat-block" id="stat-block-2">
@@ -916,6 +1026,40 @@ export default {
         <div class="damage-container">
           <span class="damage-text">Normal</span>
           <span class="damage-text">Boss</span>
+        </div>
+        <div>
+        </div>
+      </div>
+      <div class="damage-block">
+        <h2>Approximate Combat Power</h2>
+        <span class="damage-top">{{ Intl.NumberFormat("en-US" , {maximumFractionDigits: 0}).format(combatPowerB.regular.total) }}</span>
+        <div class="damage-container">
+          <span class="damage-text">Average</span>
+        </div>
+        <div class="damage-container">
+          <span class="damage-top">{{ Intl.NumberFormat("en-US" , {maximumFractionDigits: 0}).format(combatPowerB.regular.direct) }}</span>
+          <span class="damage-top">{{ Intl.NumberFormat("en-US" , {maximumFractionDigits: 0}).format(combatPowerB.regular.summon) }}</span>
+        </div>
+        <div class="damage-container">
+          <span class="damage-text">Direct</span>
+          <span class="damage-text">Summon</span>
+        </div>
+        <div>
+        </div>
+      </div>
+      <div class="damage-block">
+        <h3>Buffed</h3>
+        <span class="damage-top">{{ Intl.NumberFormat("en-US" , {maximumFractionDigits: 0}).format(combatPowerB.buffed.total) }}</span>
+        <div class="damage-container">
+          <span class="damage-text">Average</span>
+        </div>
+        <div class="damage-container">
+          <span class="damage-top">{{ Intl.NumberFormat("en-US" , {maximumFractionDigits: 0}).format(combatPowerB.buffed.direct) }}</span>
+          <span class="damage-top">{{ Intl.NumberFormat("en-US" , {maximumFractionDigits: 0}).format(combatPowerB.buffed.summon) }}</span>
+        </div>
+        <div class="damage-container">
+          <span class="damage-text">Direct</span>
+          <span class="damage-text">Summon</span>
         </div>
         <div>
         </div>
